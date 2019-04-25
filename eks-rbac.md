@@ -225,19 +225,19 @@ You define three k8s users with different privileges in your cluster and test th
 |   verbs: ["*"]
 |   
 | ---
-| kind: ClusterRoleBinding
-| apiVersion: rbac.authorization.k8s.io/v1
-| metadata:
-|   name: cluster-admin-binding
-| subjects:
-| - kind: User
-|   name: "pulumi:admin-usr"
-|   apiGroup: rbac.authorization.k8s.io
-| roleRef:
-|   kind: ClusterRole
-|   name: ClusterAdminRole
-|   apiGroup: rbac.authorization.k8s.io`
-| ```                                   |                      left-aligned |                                     |
+ kind: ClusterRoleBinding
+ apiVersion: rbac.authorization.k8s.io/v1
+ metadata:
+   name: cluster-admin-binding
+ subjects:
+ - kind: User
+   name: "pulumi:admin-usr"
+   apiGroup: rbac.authorization.k8s.io
+ roleRef:
+   kind: ClusterRole
+   name: ClusterAdminRole
+   apiGroup: rbac.authorization.k8s.io`
+ ```                                   |                      left-aligned |                                     |
 
 
 
