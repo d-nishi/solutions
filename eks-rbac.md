@@ -82,39 +82,39 @@ import * as eks from "@pulumi/eks";
 import * as k8s from "@pulumi/kubernetes";
 
 /*
-* 1) Single step deployment of three IAM Roles
-*/
+ * 1) Single step deployment of three IAM Roles
+ */
 
 function createIAMRole(name: string): aws.iam.Role {
-   // Create an IAM Role...
-   return new aws.iam.Role(`${name}`, {
-       assumeRolePolicy: `{
-           "Version": "2012-10-17",
-           "Statement":[
-             {
-               "Sid": "",
-               "Effect": "Allow",
-               "Principal": {
-                 "AWS": "arn:aws:iam::153052954103:root"
-               },
-               "Action": "sts:AssumeRole"
-             }
-           ]
-          }
-       `,
-         tags: {
-             "clusterAccess": `${name}-usr`,
-         },
-       });
-   }
+    // Create an IAM Role...
+    return new aws.iam.Role(`${name}`, {
+        assumeRolePolicy: `{
+            "Version": "2012-10-17",
+            "Statement":[
+              {
+                "Sid": "",
+                "Effect": "Allow",
+                "Principal": {
+                  "AWS": "arn:aws:iam::153052954103:root"
+                },
+                "Action": "sts:AssumeRole"
+              }
+            ]
+           }
+        `,
+          tags: {
+              "clusterAccess": `${name}-usr`,
+          },
+        });
+    }
 
- // Administrator AWS IAM clusterAdminRole with full access to all AWS resources
+    // Administrator AWS IAM clusterAdminRole with full access to all AWS resources
     const clusterAdminRole = createIAMRole("clusterAdminRole");
- 
- // Administer Automation role for use in pipelines, e.g. gitlab CI, Teamcity, etc.
+
+    // Administer Automation role for use in pipelines, e.g. gitlab CI, Teamcity, etc.
     const AutomationRole = createIAMRole("AutomationRole");
- 
- // Administer Prod role for use in Prod environment
+
+    // Administer Prod role for use in Prod environment
     const EnvProdRole = createIAMRole("EnvProdRole");
 ```
 
@@ -149,53 +149,64 @@ You use our API docs and your source-code editor to autocomplete the default `in
 
 ```
 /*
-* 2) Single step deployment of EKS cluster with the most important variables
-*/
-const vpc = new awsx.Network("vpc", {usePrivateSubnets: false });
+ * 2) Single step deployment of EKS cluster with the most important variables and a Simple Function to create namespaces   
+ * automation and prod
+ */
+
+const vpc = new awsx.Network("vpc", { usePrivateSubnets: false });
 const cluster = new eks.Cluster("eks-cluster", {
-     vpcId             : vpc.vpcId,
-     subnetIds         : vpc.publicSubnetIds,
-     instanceType      : "t2.micro",
-     nodeRootVolumeSize: 200,
-     desiredCapacity   : 10,
-     maxSize           : 10,
-     minSize           : 3,
-     deployDashboard   : false,
-     vpcCniOptions     : {
-     warmIpTarget    : 4,
- },
- roleMappings      : [
-   // Provides full administrator cluster access to the k8s cluster
-   {
-     groups    : ["system:masters"],
-     roleArn   : clusterAdminRole.arn,
-     username  : "admin-usr",
-   },
-   // Map IAM rolearn "AutomationRoleArn" to the k8s user with name "automation-usr", e.g. gitlab CI
-   {
-     groups    : ["pulumi:automation-grp"],
-     roleArn   : AutomationRole.arn,
-     username  : "automation-usr",
-   },
-   // Map IAM role arn "EnvProdRoleArn" to the k8s user with name "prod-usr"
-   {
-     groups    : ["pulumi:prod-grp"],
-     roleArn   : EnvProdRole.arn,
-     username  : "prod-usr",
-   },
- ],
+  vpcId             : vpc.vpcId,
+  subnetIds         : vpc.publicSubnetIds,
+  instanceType      : "t2.medium",
+  nodeRootVolumeSize: 200,
+  desiredCapacity   : 1,
+  maxSize           : 2,
+  minSize           : 1,
+  deployDashboard   : false,
+  vpcCniOptions     : {
+    warmIpTarget    : 4,
+  },
+  roleMappings      : [
+    // Provides full administrator cluster access to the k8s cluster
+    {
+      groups    : ["system:masters"],
+      roleArn   : clusterAdminRole.arn,
+      username  : "pulumi:admin-usr",
+    },
+    // Map IAM role arn "AutomationRoleArn" to the k8s user with name "automation-usr", e.g. gitlab CI
+    {
+      groups    : ["pulumi:automation-grp"],
+      roleArn   : AutomationRole.arn,
+      username  : "pulumi:automation-usr",
+    },
+    // Map IAM role arn "EnvProdRoleArn" to the k8s user with name "prod-usr"
+    {
+      groups    : ["pulumi:prod-grp"],
+      roleArn   : EnvProdRole.arn,
+      username  : "pulumi:prod-usr",
+    },
+  ],
 });
 
 export const clusterName = cluster.eksCluster.name;
+
+function createNewNamespace(name: string): k8s.core.v1.Namespace {
+  //Create new namespace
+  return new k8s.core.v1.Namespace(name, { metadata: { name: name } }, { provider: cluster.provider });
+}
+
+//declare namespaces automation and prod
+const automation = createNewNamespace("automation");
+const prod = createNewNamespace("prod");
 ```
 
 ## STEP 3: Understand Kubernetes RBAC. Declare the k8s YAMLs to the EKS cluster. 
 
-The Kubernetes RBAC API declares four top-level types that can be defined as YAMLs syntaxes:  a) Role - represents a set of additive rules within a namespace; b) RoleBinding - grants namespace-wide access to k8s subjects and resources; c) ClusterRole - represents a set of additive rules within the cluster; d) ClusterRoleBinding - grants cluster-wide access to k8s subjects and resources.
+The Kubernetes RBAC API declares four top-level types that can be defined as YAMLs syntaxes: **a) Role** - represents a set of additive rules within a namespace; **b) RoleBinding** - grants namespace-wide access to k8s subjects and resources; **c) ClusterRole** - represents a set of additive rules within the cluster; **d) ClusterRoleBinding** - grants cluster-wide access to k8s subjects and resources.
 
 ### The Traditional-approach: 
 You define three k8s users with different privileges in your cluster and test them sequentially:
-User type1 called admin-usr for users have cluster admin rights
+User type1 called `pulumi:admin-usr` for users have cluster admin rights
 
 ```
 $ cat user1.yaml
@@ -225,7 +236,7 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io`
 ```
 
-User type2 called automation-usr for users that have permissions to all k8s resources in namespace automation. An e.g would be your CI/CD pipeline
+User type2 called `pulumi:automation-usr` for users that have permissions to all k8s resources in namespace automation. An e.g would be your CI/CD pipeline
 
 ```
 $ cat user2.yaml
@@ -303,90 +314,97 @@ Update your `index.ts` file with more code as follows:
 
 ```
 /*
-* 3) Single Step deployment of k8s RBAC configuration for user1, user2 and user3 per our example
-*/
+ * 3) Single Step deployment of k8s RBAC configuration for user1, user2 and user3 per our example
+ */
 
-// User1 - Grant cluster admin access to all admins
-
+// Grant cluster admin access to all admins with k8s ClusterRole and ClusterRoleBinding
 new k8s.rbac.v1.ClusterRole("clusterAdminRole", {
- metadata: {
-   name: "clusterAdminRole",
- },
- rules: [{
-   apiGroups: ["*"],
-   resources: ["*"],
-   verbs: ["*"],
- }]
+  metadata: {
+    name: "clusterAdminRole",
+  },
+  rules: [{
+    apiGroups: ["*"],
+    resources: ["*"],
+    verbs: ["*"],
+  }]
 }, {provider: cluster.provider});
- new k8s.rbac.v1.ClusterRoleBinding("cluster-admin-binding", {
- metadata: {
-   name: "cluster-admin-binding",
- },
- subjects: [{
-    kind: "User",
-    name: "pulumi:admin-usr",
- }],
- roleRef: {
-   kind: "ClusterRole",
-   name: "clusterAdminRole",
-   apiGroup: "rbac.authorization.k8s.io",
- },
+  
+new k8s.rbac.v1.ClusterRoleBinding("cluster-admin-binding", {
+  metadata: {
+    name: "cluster-admin-binding",
+  },
+  subjects: [{ 
+     kind: "User",
+     name: "pulumi:admin-usr",
+  }], 
+  roleRef: {
+    kind: "ClusterRole",
+    name: "clusterAdminRole",
+    apiGroup: "rbac.authorization.k8s.io",
+  },
 }, {provider: cluster.provider});
 
-// User2 called automation-usr for users with permissions to all k8s resources in namespace automation
-
+// User2 called automation-usr for users that have permissions to all k8s resources in the namespace automation
 new k8s.rbac.v1.Role("AutomationRole", {
- metadata: {
-   name: "AutomationRole",
- },
- rules: [{
-   apiGroups: ["*"],
-   resources: ["*"],
-   verbs: ["*"],
- }]
+  metadata: {
+    name: "AutomationRole",
+    namespace: "automation",
+  },
+  rules: [{
+    apiGroups: ["*"],
+    resources: ["*"],
+    verbs: ["*"],
+  }]
 }, {provider: cluster.provider});
-
+  
 new k8s.rbac.v1.RoleBinding("automation-binding", {
- metadata: {
-   name: "automation-binding",
- },
- subjects: [{
-    kind: "User",
-    name: "pulumi:automation-usr",
- }],
- roleRef: {
-   kind: "Role",
-   name: "AutomationRole",
-   apiGroup: "rbac.authorization.k8s.io",
- },
+  metadata: {
+    name: "automation-binding",
+    namespace: "automation",
+  },
+  subjects: [{ 
+     kind: "User",
+     name: "pulumi:automation-usr",
+     apiGroup: "rbac.authorization.k8s.io",
+  }], 
+  roleRef: {
+    kind: "Role",
+    name: "AutomationRole",
+    apiGroup: "rbac.authorization.k8s.io",
+  },
 }, {provider: cluster.provider});
 
-// User3 called prod-usr for users with read access to all k8s resources in namespace env-prod
-
+// User3 called prod-usr for users that have read access to all k8s resources in  the namespace env-prod
 new k8s.rbac.v1.Role("EnvProdRole", {
- metadata: {
-   name: "EnvProdRole",
- },
- rules: [{
-   apiGroups: ["*"],
-   resources: ["*"],
-   verbs: ["get", "watch", "list"],
- }],
+  metadata: {
+    name: "EnvProdRole",
+    namespace: "prod",
+  },
+  rules: [{
+    apiGroups: ["*"],
+    resources: ["*"],
+    verbs: ["get", "watch", "list"],
+  }],
 }, {provider: cluster.provider});
- new k8s.rbac.v1.RoleBinding("env-prod-binding", {
- metadata: {
-   name: "env-prod-binding",
- },
- subjects: [{
-    kind: "User",
-    name: "pulumi:prod-usr",
- }],
- roleRef: {
-   kind: "Role",
-   name: "EnvProdRole",
-   apiGroup: "rbac.authorization.k8s.io",
- },
+  
+new k8s.rbac.v1.RoleBinding("env-prod-binding", {
+  metadata: {
+    name: "env-prod-binding",
+    namespace: "prod",
+  },
+  subjects: [{ 
+     kind: "User",
+     name: "pulumi:prod-usr",
+     apiGroup: "rbac.authorization.k8s.io",
+    }], 
+  roleRef: {
+    kind: "Role",
+    name: "EnvProdRole",
+    apiGroup: "rbac.authorization.k8s.io",
+  },
 }, {provider: cluster.provider});
+
+export const kubeconfig = cluster.kubeconfig
 ```
 
 ## STEP 4: Update aws-iam-authenticator ConfigMap to map three IAM Roles to three k8s usernames.
@@ -422,7 +440,7 @@ Setting up RBAC on one EKS cluster is a long convoluted sequential process that 
 
 ## Testing the Pulumi approach worked:
 
-If you run `pulumi up` with this `index.ts` [file](https://gist.github.com/d-nishi/ab462ea779e0615f29e8cfbb668272d7).
+Make sure you run `pulumi up` with this `index.ts` [file](https://gist.github.com/d-nishi/ab462ea779e0615f29e8cfbb668272d7). 
 
 ```
 $ pulumi stack output kubeconfig | jq > kubeconfig.yaml
@@ -442,7 +460,7 @@ Assume the IAM role `AutomationRole` with access to all Kubernetes resources in 
             "-i",
             "eks-cluster-eksCluster-196b0de",
             "-r",
-            "arn:aws:iam::153052954103:role/AutomationRole"
+            "arn:aws:iam::xxxxxxxxxxxx:role/AutomationRole"
           ],
           "command": "aws-iam-authenticator"
         }
@@ -450,21 +468,15 @@ Assume the IAM role `AutomationRole` with access to all Kubernetes resources in 
     }
   ]
 }
+
+$ kubectl get po --namespace=automation
+No resources found.
+
+$ kubectl get po --namespace=prod
+Error from server (Forbidden): pods is forbidden: User "pulumi: automation-usr" cannot list resource "pods" in API group "" in the namespace "prod"
 ```
-If you run `kubectl get po --namespace=automation` you will get an output `No Resources Found` as we did not create any resources in this namespace.
 
-## The Traditional-approach: Customer NIGHTMARES!
-
-* **YAML APOCALYPSE!** The YAML configurations that this increased scale inevitably requires becomes cumbersome for most operators.
-* **CHANGE -- YIKES!** Changing a roleRef in a RoleBinding, involves deleting the previous RoleBinding and creating a new one.
-* **WORKFLOW AUTOMATION** In workflows driven by automation, where infrastructure as code is often seen as the gold standard, this doesn’t fit in very well.
-* **RBAC AT SCALE** Auditing and managing the current users to see what access they have across one or multiple clusters is hard. You can’t just delete a RoleBinding from a repo and hope for some kind of automated task to manage the change for you.
-
-## The Pulumi-approach: Customer Benefits:
-* **NO MORE YAMLs!** Configuring YAMLs, operators or custom resources is now a thing in the past!  You use Typescript or Javascript to program directly with our cloud SDK and connect all cloud services to your Kubernetes services with a simple reference to the object in your program. 
-* **INCREASED DEVELOPMENT VELOCITY** You intuitively program Kubernetes objects with our SDK abstractions using minimal amount of code within hours instead of months. You “autocomplete” AWS, EKS, Kubernetes specifications within your IDE without understanding the entire API. 
-* **EASY UPDATES** You change deployed k8s resources on one or multiple clusters by updating your typescript file `index.ts` and running `pulumi up`.The [Pulumi console](https://app.pulumi.com/) allows you to share your stack with your team in your GitHub, GitLab, or Atlassian-based organization. 
-* **WORKFLOW AUTOMATION FOR RBAC AT SCALE** You can delete or update multiple RoleBindings or Roles from your Pulumi stack source code. As you commit these changes to your repository, you can plan automated triggers that validate such changes as part of your CI/CD flow, whether you use [Travis](https://pulumi.io/reference/cd-travis.html), [CircleCI](https://pulumi.io/reference/cd-circleci.html), [AzureDevOps](https://pulumi.io/reference/cd-azure-devops.html), etc. Pulumi even has a [GitHub Application](https://pulumi.io/reference/cd-github.html) for surfacing results within pull requests.
+Upon assuming the IAM role `AutomationRole` which is mapped to Kubernernetes username `pulumi:automation-usr` in the EKS cluster configmap, you are only restricted to the resources and verbs allowed in the namespace "automation" and not in namespace "prod".
 
 In this post, we discussed how setting up Kubernetes RBAC with Pulumi is simple, comprehensive, 
 non-sequential and part of your everyday programming experience instead of being a YAML and DSL tool chain drudgery. You can find the complete pulumi code for our example [here](https://gist.github.com/d-nishi/a4e54dfc973ea047ec46c8deb5193f4e). For more examples visit our GitHub examples page [here](https://github.com/pulumi/examples).
