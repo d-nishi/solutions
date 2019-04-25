@@ -2,8 +2,11 @@
 One of the most common areas Kubernetes operators struggle with in production involves creating and managing role-based access control (RBAC). This is so daunting that RBAC is often not implemented, or implemented halfway, or the configuration becomes impossible to maintain. In this post, we will contrast the traditional way of working with RBAC on EKS with using Pulumi — Pulumi makes RBAC on Kubernetes so easy that you'll never create an insecure cluster again!
 
 * **NO MORE YAMLs!** Configuring YAMLs, operators or custom resources is now a thing in the past!  You use Typescript or Javascript to program directly with our cloud SDK and connect all cloud services to your Kubernetes services with a simple reference to the object in your program. 
+
 * **INCREASED DEVELOPMENT VELOCITY:** You intuitively program Kubernetes objects with our SDK abstractions using minimal amount of code within hours instead of months. You “autocomplete” AWS, EKS, Kubernetes specifications within your IDE without understanding the entire API. 
+
 * **EASY UPDATES:** Changing a `roleRef` in a `RoleBinding`, on one or multiple clusters involves updating your typescript file `index.ts` and running `pulumi up`. The Pulumi console allows you to share your stack with your team in your GitHub, GitLab, or Atlassian-based organization. 
+
 * **WORKFLOW AUTOMATION FOR RBAC AT SCALE:** You can delete or update multiple `RoleBindings or Roles` from your Pulumi stack source code. As you commit these changes to your repository, you can plan automated triggers that validate such changes as part of your CI/CD flow, whether you use Travis, CircleCI, AzureDevOps and more. Pulumi even has a GitHub Application for surfacing results within pull requests.
 
 ## Prerequisites to work with Pulumi: 
@@ -27,7 +30,7 @@ drwxr-xr-x  92 nishidavidson  staff   2944 Apr 18 14:49 node_modules
 
 With Pulumi, you will modify and update the default `index.ts` file with AWS and EKS resource variable declarations. We show you how to add this code as we contrast Pulumi’s approach with the sequential traditional approach in the steps below. In the end, you will do a one-time run of `pulumi up` and watch all the steps in the Traditional Way come alive simultaneously.
 
-## STEP 1: Create three IAM Roles with a Trust-policy to map to EKS RBAC. 
+## Step 1: Create three IAM Roles with a Trust-policy to map to Amazon EKS RBAC. 
 
 ### The Traditional-approach: 
 You sequentially create three IAM roles (`clusterAdminRole`; `AutomationRole`; `EnvProdRole`) with aws command line tool as shown below: 
@@ -118,7 +121,7 @@ function createIAMRole(name: string): aws.iam.Role {
     const EnvProdRole = createIAMRole("EnvProdRole");
 ```
 
-## STEP 2: Create one EKS cluster. Validate the cluster was created. Add the namespaces you need.
+## Step 2: Create one EKS cluster. Validate the cluster was created. Add the namespaces you need.
 
 ### The Traditional-approach: 
 
@@ -200,31 +203,28 @@ const automation = createNewNamespace("automation");
 const prod = createNewNamespace("prod");
 ```
 
-## STEP 3: Understand Kubernetes RBAC. Declare the k8s YAMLs to the EKS cluster. 
+## Step 3: Understand Kubernetes RBAC. Declare the Kubernetes objects to the EKS cluster. 
 
 The Kubernetes RBAC API declares four top-level types that can be defined as YAMLs syntaxes: **a) Role** - represents a set of additive rules within a namespace; **b) RoleBinding** - grants namespace-wide access to k8s subjects and resources; **c) ClusterRole** - represents a set of additive rules within the cluster; **d) ClusterRoleBinding** - grants cluster-wide access to k8s subjects and resources.
 
 ### The Traditional-approach: 
+
 You define three k8s users with different privileges in your cluster and test them sequentially:
+User type1 called `pulumi:admin-usr` for users have cluster admin rights   
 
-
-| User type1 called `pulumi:admin-usr`       |
-| for users have cluster admin rights        |      
-|--------------------------------------------|:---------------------------------:|------------------------------------:|
-| ```                                        |```                                |                                     |
-| $ cat user1.yaml                           |
-|                                            |
-| kind: ClusterRole
-| apiVersion: rbac.authorization.k8s.io/v1
-| metadata:
-|   name: ClusterAdminRole
-|   # no namespace needed
-| rules:
-| - apiGroups: ["*"]
-|   resources: ["*"]
-|   verbs: ["*"]
-|   
-| ---
+```                                        
+ $ cat user1.yaml                           
+ kind: ClusterRole
+ apiVersion: rbac.authorization.k8s.io/v1
+ metadata:
+   name: ClusterAdminRole
+   # no namespace needed
+ rules:
+ - apiGroups: ["*"]
+   resources: ["*"]
+   verbs: ["*"]
+   
+ ---
  kind: ClusterRoleBinding
  apiVersion: rbac.authorization.k8s.io/v1
  metadata:
@@ -237,9 +237,7 @@ You define three k8s users with different privileges in your cluster and test th
    kind: ClusterRole
    name: ClusterAdminRole
    apiGroup: rbac.authorization.k8s.io`
- ```                                   |                      left-aligned |                                     |
-
-
+```
 
 User type2 called `pulumi:automation-usr` for users that have permissions to all k8s resources in namespace automation. An e.g would be your CI/CD pipeline
 
@@ -412,7 +410,7 @@ new k8s.rbac.v1.RoleBinding("env-prod-binding", {
 export const kubeconfig = cluster.kubeconfig
 ```
 
-## STEP 4: Update aws-iam-authenticator ConfigMap to map three IAM Roles to three k8s usernames.
+## Step 4: Update aws-iam-authenticator ConfigMap to map the IAM Roles to the Kubernetes usernames.
 
 ### The Traditional-approach: 
 
@@ -484,4 +482,4 @@ Error from server (Forbidden): pods is forbidden: User "pulumi: automation-usr" 
 Upon assuming the IAM role `AutomationRole` which is mapped to Kubernernetes username `pulumi:automation-usr` in the EKS cluster configmap, you are only restricted to the resources and verbs allowed in the namespace "automation" and not in namespace "prod".
 
 In this post, we discussed how setting up Kubernetes RBAC with Pulumi is simple, comprehensive, 
-non-sequential and part of your everyday programming experience instead of being a YAML and DSL tool chain drudgery. You can find the complete pulumi code for our example [here](https://gist.github.com/d-nishi/a4e54dfc973ea047ec46c8deb5193f4e). For more examples visit our GitHub examples page [here](https://github.com/pulumi/examples).
+non-sequential and part of your everyday programming experience. You can find the complete pulumi code for our example [here](https://gist.github.com/d-nishi/a4e54dfc973ea047ec46c8deb5193f4e). For more examples visit our GitHub examples page [here](https://github.com/pulumi/examples).
