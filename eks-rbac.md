@@ -1,4 +1,4 @@
-# Simplify Kubernetes RBAC in Amazon EKS with open source Pulumi packages
+# Simplify Kubernetes RBAC in Amazon EKS with Pulumi open source packages
 One of the most common areas Kubernetes operators struggle with in production involves creating and managing role-based access control (RBAC). This is so daunting that RBAC is often not implemented, or implemented halfway, or the configuration becomes impossible to maintain. In this post, we will contrast the traditional way of working with RBAC on EKS with using Pulumi — Pulumi makes RBAC on Kubernetes so easy that you'll never create an insecure cluster again!
 
 * **NO MORE YAMLs!** Configuring YAMLs, operators or custom resources is now a thing in the past!  You use Typescript or Javascript to program directly with our cloud SDK and connect all cloud services to your Kubernetes services with a simple reference to the object in your program. 
@@ -121,7 +121,7 @@ function createIAMRole(name: string): aws.iam.Role {
     const EnvProdRole = createIAMRole("EnvProdRole");
 ```
 
-## Step 2: Create one EKS cluster. Validate the cluster was created. Add the namespaces you need.
+## Step 2: Create one EKS cluster. Validate cluster creation. Add the namespaces you need.
 
 ### The Traditional-approach: 
 
@@ -203,7 +203,7 @@ const automation = createNewNamespace("automation");
 const prod = createNewNamespace("prod");
 ```
 
-## Step 3: Understand Kubernetes RBAC. Declare the Kubernetes objects to the EKS cluster. 
+## Step 3: Understand Kubernetes RBAC. Declare the Kubernetes objects on the EKS cluster. 
 
 The Kubernetes RBAC API declares four top-level types that can be defined as YAMLs syntaxes: **a) Role** - represents a set of additive rules within a namespace; **b) RoleBinding** - grants namespace-wide access to k8s subjects and resources; **c) ClusterRole** - represents a set of additive rules within the cluster; **d) ClusterRoleBinding** - grants cluster-wide access to k8s subjects and resources.
 
