@@ -206,7 +206,14 @@ The Kubernetes RBAC API declares four top-level types that can be defined as YAM
 
 ### The Traditional-approach: 
 You define three k8s users with different privileges in your cluster and test them sequentially:
-User type1 called `pulumi:admin-usr` for users have cluster admin rights
+
+
+| User type1 called `pulumi:admin-usr`   |
+| for users have cluster admin rights    |      
+|----------------------------------------|:---------------------------------:|------------------------------------:|
+| col 1 is                               |                      left-aligned |                                     |
+| col 2 is                               |                                   |                                     |
+|                                        |                                   |                                  $1 |
 
 ```
 $ cat user1.yaml
