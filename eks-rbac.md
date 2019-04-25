@@ -208,40 +208,38 @@ The Kubernetes RBAC API declares four top-level types that can be defined as YAM
 You define three k8s users with different privileges in your cluster and test them sequentially:
 
 
-| User type1 called `pulumi:admin-usr`   |
-| for users have cluster admin rights    |      
-|----------------------------------------|:---------------------------------:|------------------------------------:|
-| col 1 is                               |                      left-aligned |                                     |
-| col 2 is                               |                                   |                                     |
-|                                        |                                   |                                  $1 |
+| User type1 called `pulumi:admin-usr`       |
+| for users have cluster admin rights        |      
+|--------------------------------------------|:---------------------------------:|------------------------------------:|
+| ```                                        |```                                |                                     |
+| $ cat user1.yaml                           |
+|                                            |
+| kind: ClusterRole
+| apiVersion: rbac.authorization.k8s.io/v1
+| metadata:
+|   name: ClusterAdminRole
+|   # no namespace needed
+| rules:
+| - apiGroups: ["*"]
+|   resources: ["*"]
+|   verbs: ["*"]
+|   
+| ---
+| kind: ClusterRoleBinding
+| apiVersion: rbac.authorization.k8s.io/v1
+| metadata:
+|   name: cluster-admin-binding
+| subjects:
+| - kind: User
+|   name: "pulumi:admin-usr"
+|   apiGroup: rbac.authorization.k8s.io
+| roleRef:
+|   kind: ClusterRole
+|   name: ClusterAdminRole
+|   apiGroup: rbac.authorization.k8s.io`
+| ```                                   |                      left-aligned |                                     |
 
-```
-$ cat user1.yaml
 
-kind: ClusterRole
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: ClusterAdminRole
-  # no namespace needed
-rules:
-- apiGroups: ["*"]
-  resources: ["*"]
-  verbs: ["*"]
-  
----
-kind: ClusterRoleBinding
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: cluster-admin-binding
-subjects:
-- kind: User
-  name: "pulumi:admin-usr"
-  apiGroup: rbac.authorization.k8s.io
-roleRef:
-  kind: ClusterRole
-  name: ClusterAdminRole
-  apiGroup: rbac.authorization.k8s.io`
-```
 
 User type2 called `pulumi:automation-usr` for users that have permissions to all k8s resources in namespace automation. An e.g would be your CI/CD pipeline
 
