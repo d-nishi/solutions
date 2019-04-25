@@ -1,6 +1,11 @@
 # Simplify Kubernetes RBAC in Amazon EKS with open source Pulumi packages
 One of the most common areas Kubernetes operators struggle with in production involves creating and managing role-based access control (RBAC). This is so daunting that RBAC is often not implemented, or implemented halfway, or the configuration becomes impossible to maintain. In this post, we will contrast the traditional way of working with RBAC on EKS with using Pulumi — Pulumi makes RBAC on Kubernetes so easy that you'll never create an insecure cluster again!
 
+* **NO MORE YAMLs!** Configuring YAMLs, operators or custom resources is now a thing in the past!  You use Typescript or Javascript to program directly with our cloud SDK and connect all cloud services to your Kubernetes services with a simple reference to the object in your program. 
+* **INCREASED DEVELOPMENT VELOCITY:** You intuitively program Kubernetes objects with our SDK abstractions using minimal amount of code within hours instead of months. You “autocomplete” AWS, EKS, Kubernetes specifications within your IDE without understanding the entire API. 
+* **EASY UPDATES:** Changing a `roleRef` in a `RoleBinding`, on one or multiple clusters involves updating your typescript file `index.ts` and running `pulumi up`. The Pulumi console allows you to share your stack with your team in your GitHub, GitLab, or Atlassian-based organization. 
+* **WORKFLOW AUTOMATION FOR RBAC AT SCALE:** You can delete or update multiple `RoleBindings or Roles` from your Pulumi stack source code. As you commit these changes to your repository, you can plan automated triggers that validate such changes as part of your CI/CD flow, whether you use Travis, CircleCI, AzureDevOps and more. Pulumi even has a GitHub Application for surfacing results within pull requests.
+
 ## Prerequisites to work with Pulumi: 
 [Install `pulumi` CLI](https://pulumi.io/quickstart/install.html) and set up your [AWS credentials](https://pulumi.io/quickstart/aws/setup.html).
 Initialize a new [Pulumi project](https://pulumi.io/reference/project.html) from available templates. We use `aws-typescript template` here to install all dependencies and save the configuration.
