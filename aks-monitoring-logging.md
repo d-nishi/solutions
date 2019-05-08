@@ -1,5 +1,5 @@
 
-[Image: image]**Featured Image**
+![alt text](https://github.com/d-nishi/solutions/blob/master/feaured-image.png)
 
 # Create AKS Clusters with monitoring and logging with Pulumi-Azure open source SDKs
 
@@ -146,10 +146,20 @@ akscluster1321f898
 
 b) Check Pulumi Service Console for the resource creation on the stack you just initialized: “[d-nishi](https://app.pulumi.com/d-nishi)/azure-mean/[dev”](https://app.pulumi.com/d-nishi/azure-mean/dev)
 
-[Image: Screen Shot 2019-05-08 at 8.45.18 AM.png]
+
+![alt text](https://github.com/d-nishi/solutions/blob/master/pulumi-console.png)
+
 
 c) Check your Azure portal for the cluster-id and to find all the metrics (Insights) and logs (Logs) show up as follows:
 
-[Image: logs.png][Image: metrics.png]In this post, we discussed how to set up AKS clusters with monitoring and logging in simple steps with Pulumi packages. You can find the complete pulumi code for our example [_here_](https://gist.github.com/d-nishi/b757e1e8b3ebe187d81ce32a4d15525e). For more examples visit our GitHub examples page [here](https://github.com/pulumi/examples). 
+
+![alt text](https://github.com/d-nishi/solutions/blob/master/metrics.png)
+
+
+
+![alt text](https://github.com/d-nishi/solutions/blob/master/logs.png)
+
+
+In this post, we discussed how to set up AKS clusters with monitoring and logging in simple steps with Pulumi packages. You can find the complete pulumi code for our example [_here_](https://gist.github.com/d-nishi/b757e1e8b3ebe187d81ce32a4d15525e). For more examples visit our GitHub examples page [here](https://github.com/pulumi/examples). 
 
 If you want to additionally look at how to integrate Azure DevOps with Pulumi, refer our recent blog here: https://blog.pulumi.com/ci/cd-made-easy-with-pulumi-and-azure-pipelines
