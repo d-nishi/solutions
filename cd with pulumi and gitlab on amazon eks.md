@@ -40,18 +40,17 @@ Please read more about [how to manage stack tags here](https://pulumi.io/referen
 
 Let's now work through our example with Gitlab Pipelines.
 
-## 
-Gitlab Pipeline by Environment - Example 
+## Gitlab Pipeline by Environment - Example 
 
 1. We created a Gitlab Group called **pulumi**
-2. We created 3 Gitlab projects called **“sample-iam”; “sample-eks” and “sample-k8sapp”**
-3. We have 2 pipelines: **environment:dev **and** environment:prod**
+2. We created 3 Gitlab projects called **sample-iam**, **sample-eks** and **sample-k8sapp**
+3. We have 2 pipelines: **environment:dev** and **environment:prod**
     1. In the two pipelines, we have a total of “six” pulumi stacks: 
-        1. **pulumi/sample-IAM/dev **and** pulumi/sample-iam/prod; **
-        2. **pulumi/sample-eks/dev **and** **pulumi/sample-eks/prod; ****
-        3. **pulumi/sample-k8sapp/dev **and ******pulumi/sample-k8sapp/prod; ******
-    2. **pulumi/sample-iam/dev** stack will trigger the downstream stack **pulumi/sample-eks/dev **provided the cycle of **“pulumi preview” → “pulumi deploy”** completes without any failure. 
-    3. **pulumi/sample-eks/dev **will trigger the downstream stack **pulumi/sample-k8sapp/dev **provided the cycle of** “pulumi preview” → “pulumi deploy”** completes without any failure.
+        1. **pulumi/sample-IAM/dev** and **pulumi/sample-iam/prod**
+        2. **pulumi/sample-eks/dev** and **pulumi/sample-eks/prod**
+        3. **pulumi/sample-k8sapp/dev** and **pulumi/sample-k8sapp/prod**
+    2. **pulumi/sample-iam/dev** stack will trigger the downstream stack **pulumi/sample-eks/dev** provided the cycle of **pulumi preview → pulumi deploy** completes without any failure. 
+    3. **pulumi/sample-eks/dev** will trigger the downstream stack **pulumi/sample-k8sapp/dev** provided the cycle of **pulumi preview → pulumi deploy** completes without any failure.
 
 ![alt text](https://github.com/d-nishi/solutions/blob/master/microstack-environment.png)
 
@@ -63,7 +62,7 @@ Gitlab Pipeline by Environment - Example
 
 If you run `pulumi` from any branch other than the `master` branch, you will hit an error that the `PULUMI_ACCESS_TOKEN` environment variable cannot be accessed. You can fix this by specifying a wildcard regex to allow specific branches to be able to access the secret environment variables. Please refer to the [GitLab documentation](https://gitlab.com/help/user/project/protected_branches.md) to understand this better.
 
-First we set up **“three”** Pulumi stacks: **sample-IAM; sample-EKS** and** sample-k8sApp** with stack tag: `environment:dev` 
+First we set up “three” Pulumi stacks: **sample-iam**; **sample-eks** and **sample-k8sApp** with stack tag:`environment:dev` 
 
 **Step 1:** Create the pulumi stack "sample-IAM" and set stack tag "key:value" = "environment:dev". Update the `index.ts` file with the relevant code block as shown below and run `pulumi up `
 
@@ -122,7 +121,7 @@ $ pulumi up
 ```
 
 
-**Step 2:** Create the pulumi stack "sample-EKS" and set stack tag "key:value" = "environment:dev". Update the `index.ts` file with the relevant code block as shown below, download the additional npm packages for EKS and Kubernetes and run `pulumi up`
+**Step 2:** Create the pulumi stack **sample-eks** and set stack tag "key:value" = "environment:dev". Update the `index.ts` file with the relevant code block as shown below, download the additional npm packages for EKS and Kubernetes and run `pulumi up`
 
 We then initialize a new stack tag “key:value" = "environment:prod" and run  `pulumi up` with the same `index.ts` file
 
