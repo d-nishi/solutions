@@ -1,8 +1,8 @@
 ![alt text](https://github.com/d-nishi/solutions/blob/master/featured-image-gitlab.png)
-# Continuous Delivery with Gitlab and Pulumi
+# Continuous Delivery with Gitlab and Pulumi on Amazon EKS
 
 Authors: [Nishi Davidson](https://pulumi.quip.com/eLPAEA81Pyv) and [Sean Gillespie](https://pulumi.quip.com/DbWAEA1i3Dl)
-Date: 05/14/2019
+Date: 05/16/2019
 
 ## Prerequisites
 
