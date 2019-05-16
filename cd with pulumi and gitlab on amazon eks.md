@@ -71,9 +71,9 @@ First we set up “three” Pulumi stacks: **sample-iam**; **sample-eks** and **
 We then initialize a new stack tag “key:value" = "environment:prod" and run  `pulumi up` with the same `index.ts` file
 
 ```
-**$ pulumi new aws-typescript --dir pulumi/sample-iam/dev**
+$ pulumi new aws-typescript --dir pulumi/sample-iam/dev
 
-**$ cat index.ts**
+$ cat index.ts
 
 import * as aws from "@pulumi/aws";
 
@@ -115,11 +115,11 @@ function createIAMRole(name: string): aws.iam.Role {
 $ pulumi up
 
 //Initialize new pulumi stack in the format pulumi stack init <org name>/<project>/<stack>
-**$ pulumi stack init pulumi/sample-iam/prod
-**$ **pulumi stack tag set environment prod****
-**$ pulumi up**
+$ pulumi stack init pulumi/sample-iam/prod
+$ pulumi stack tag set environment prod
+$ pulumi up
 
-**
+
 ```
 
 
@@ -128,9 +128,9 @@ $ pulumi up
 We then initialize a new stack tag “key:value" = "environment:prod" and run  `pulumi up` with the same `index.ts` file
 
 ```
-**$ pulumi new aws-typescript --dir pulumi/sample-eks/dev
-**
-**$ cat index.ts**
+$ pulumi new aws-typescript --dir pulumi/sample-eks/dev
+
+$ cat index.ts**
 
 import * as aws from "@pulumi/aws";
 import * as awsx from "@pulumi/awsx";
@@ -242,15 +242,15 @@ new k8s.rbac.v1.RoleBinding("automation-binding", {
 
 export const kubeconfig = cluster.kubeconfig.apply(JSON.stringify)
 
-**$ npm install --save @pulumi/eks @pulumi/kubernetes**
-**$ pulumi up
-**
+$ npm install --save @pulumi/eks @pulumi/kubernetes
+$ pulumi up
+
 //Initialize new pulumi stack in the format pulumi stack init <org name>/<project>/<stack>
-**$ pulumi stack init pulumi/sample-eks/prod**
-**$ **pulumi stack tag set environment prod
-**$ pulumi up
-**
-****
+$ pulumi stack init pulumi/sample-eks/prod
+$ pulumi stack tag set environment prod
+$ pulumi up
+
+
 ```
 
 **Step 3:** Create the pulumi stack "sample-EKS" and set stack tag "key:value" = "environment:dev". Update the `index.ts` file with the relevant code block as shown below, download the additional npm packages for EKS and Kubernetes and run `pulumi up`
@@ -258,11 +258,11 @@ export const kubeconfig = cluster.kubeconfig.apply(JSON.stringify)
 We then initialize a new stack tag “key:value" = "environment:prod" and run  `pulumi up` with the same `index.ts` file
 
 ```
-**$ pulumi new aws-typescript --dir pulumi/sample-****k8sapp/dev** 
-**
+$ pulumi new aws-typescript --dir pulumi/sample-k8sapp/dev 
+
 $ cat index.ts
 
-**import * as aws from "@pulumi/aws";
+import * as aws from "@pulumi/aws";
 import * as docker from "@pulumi/docker";
 import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
@@ -325,10 +325,10 @@ const image1 = new docker.Image("breathe", {
 $ npm install --save @pulumi/kubernetes @pulumi/docker
 $ pulumi up
 
-**//Initialize new pulumi stack**
+//Initialize new pulumi stack
 $ pulumi stack init pulumi/sample-eks/prod
 $ pulumi stack tag set environment prod
-**$ pulumi up****
+$ pulumi up
 ```
 
 ## Using Gitlab Pipelines with the “six” Pulumi stacks in `environment:dev` and `environment:prod`
