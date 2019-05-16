@@ -1,4 +1,4 @@
-![alt text](https://github.com/d-nishi/solutions/blob/master/feaured-image-gitlab.png)
+![alt text](https://github.com/d-nishi/solutions/blob/master/featured-image-gitlab.png)
 # Continuous Delivery with Gitlab and Pulumi
 
 Authors: [Nishi Davidson](https://pulumi.quip.com/eLPAEA81Pyv) and [Sean Gillespie](https://pulumi.quip.com/DbWAEA1i3Dl)
