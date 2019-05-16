@@ -78,7 +78,7 @@ $ cat index.ts
 import * as aws from "@pulumi/aws";
 
 /*
- * 1) Single step deployment of three IAM Roles
+ * Single step deployment of three IAM Roles
  */
 
 function createIAMRole(name: string): aws.iam.Role {
@@ -331,7 +331,7 @@ $ pulumi stack tag set environment prod
 $ pulumi up
 ```
 
-## Using Gitlab Pipelines with the “six” Pulumi stacks in `environment:dev` and `environment:prod`
+## Using Gitlab Pipelines with the “six” Pulumi stacks in environment:dev and environment:prod
 
 GitLab pipelines are configured using `.gitlab-ci.yml` files in the root of each repository. GitLab Silver and above is capable of [running pipelines that cross project boundaries](https://docs.gitlab.com/ee/ci/multi_project_pipelines.html#passing-variables-to-a-downstream-pipeline), so we will be using that to construct our pipeline.
 
