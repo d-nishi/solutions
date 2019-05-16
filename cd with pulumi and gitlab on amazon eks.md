@@ -27,6 +27,8 @@ Pulumi [Projects](https://pulumi.io/reference/project.html) and [stacks](https:/
 
 Working with Inter-Stack Dependencies with the latter option is more suited in a production setup giving users more flexibility and boundaries between their teams. We will use this structure in our example below. For more information on Pulumi projects and stacks, please refer to our documentation [here](https://pulumi.io/reference/organizing-stacks-projects.html).
 
+This brings us to the end of our CD solution with Pulumi and Gitlab on Amazon EKS. For more examples, refer to our open source repository [here](https://github.com/pulumi/examples). Refer to my previous blog on Amazon EKS and k8s RBAC [here](https://blog.pulumi.com/simplify-kubernetes-rbac-in-amazon-eks-with-open-source-pulumi-packages).
+
 ### Tagging Pulumi Stacks to create Environments:
 
 * Pulumi Stacks have associated metadata in the form of key/value tags. 
