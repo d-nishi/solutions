@@ -34,8 +34,7 @@ Working with Inter-Stack Dependencies with the latter option is more suited in a
     * In our example below we have two environments prod and dev. 
     * We group stacks by environment by assigning custom `environment` tags `prod` and `dev` to the respective stacks
     * In the Pulumi Cloud Console, you’ll be able to group stacks by `Tag: environment:dev` and `Tag: environment:prod`. 
-    * [Image: image.png]
-
+    
 Please read more about [how to manage stack tags here](https://pulumi.io/reference/stack.html#stack-tags).
 
 ![alt text](https://github.com/d-nishi/solutions/blob/master/microstack-environment.png)
@@ -60,7 +59,7 @@ Let's now work through our example with Gitlab Pipelines.
     1. The first is `PULUMI_ACCESS_TOKEN`, which is required to authenticate with **pulumi.com** in order to perform the preview or update. You can create a new Pulumi access token specifically for your CI/CD job on your [Pulumi Account page](https://app.pulumi.com/account/tokens?__hstc=228626179.56681581cf02b2e77b51bd3037fb698a.1554407757799.1557357031878.1557359155284.54&__hssc=228626179.2.1557359155284&__hsfp=3057520729).
     2. Next, you will also need to set environment variables specific to your cloud resource provider. For example, if your stack is managing resources on AWS, `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
 
-## Creating Pulumi stacks and pushing these to Gitlab project master branch
+## Create Pulumi stacks and push the files to your Gitlab project
 
 If you run `pulumi` from any branch other than the `master` branch, you will hit an error that the `PULUMI_ACCESS_TOKEN` environment variable cannot be accessed. You can fix this by specifying a wildcard regex to allow specific branches to be able to access the secret environment variables. Please refer to the [GitLab documentation](https://gitlab.com/help/user/project/protected_branches.md) to understand this better.
 
