@@ -48,7 +48,7 @@ Gitlab Pipeline by Environment - Example
         2. **pulumi/sample-eks/dev **and** **pulumi/sample-eks/prod; ****
         3. **pulumi/sample-k8sapp/dev **and ******pulumi/sample-k8sapp/prod; ******
     2. **pulumi/sample-iam/dev** stack will trigger the downstream stack **pulumi/sample-eks/dev **provided the cycle of **“pulumi preview” → “pulumi deploy”** completes without any failure. 
-    3. **pulumi-/sample-eks/dev **will trigger the downstream stack **pulumi/sample-k8sapp/dev **provided the cycle of** “pulumi preview” → “pulumi deploy”** completes without any failure.
+    3. **pulumi/sample-eks/dev **will trigger the downstream stack **pulumi/sample-k8sapp/dev **provided the cycle of** “pulumi preview” → “pulumi deploy”** completes without any failure.
     4. [Image: image.png]
 4. To use Pulumi within GitLab CI, there are a few environment variables you’ll need to set for each build.
     1. The first is `PULUMI_ACCESS_TOKEN`, which is required to authenticate with **pulumi.com** in order to perform the preview or update. You can create a new Pulumi access token specifically for your CI/CD job on your [Pulumi Account page](https://app.pulumi.com/account/tokens?__hstc=228626179.56681581cf02b2e77b51bd3037fb698a.1554407757799.1557357031878.1557359155284.54&__hssc=228626179.2.1557359155284&__hsfp=3057520729).
@@ -371,4 +371,6 @@ This file describes a three-stage pipeline for the `sample-iam` project:
 3. Finally, we trigger the pipeline in `pulumi-gilab/sample-eks`, which triggers the next pipeline in our pipeline daisy chain illustrated in the above image.
 
 Despite being powerful, conceptually this setup is quite simple and doesn't require much code to get right.
-[Image: image.png]Upon a successful update, each tier's pipeline will trigger a pipeline for the tiers that depend on it. Pulumi's StackReference feature ensures that the dependent tiers receive new copies of the outputs exported from the IAM stack, so the deployment flows naturally through the pipeline!
+[Image: image.png]
+
+Upon a successful update, each tier's pipeline will trigger a pipeline for the tiers that depend on it. Pulumi's StackReference feature ensures that the dependent tiers receive new copies of the outputs exported from the IAM stack, so the deployment flows naturally through the pipeline!
