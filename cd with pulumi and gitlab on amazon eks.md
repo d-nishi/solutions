@@ -103,10 +103,6 @@ function createIAMRole(name: string): aws.iam.Role {
         });
     }
 
-    // Administrator AWS IAM clusterAdminRole with full access to all AWS resources
-    export const clusterAdminRole = createIAMRole("clusterAdminRole");
-    export const clusterAdminRoleArn = clusterAdminRole.arn;
-
     // Administer Automation role for use in pipelines, e.g. gitlab CI, Teamcity, etc.
     export const AutomationRole = createIAMRole("AutomationRole");
     export const AutomationRoleArn = AutomationRole.arn;
@@ -114,13 +110,12 @@ function createIAMRole(name: string): aws.iam.Role {
 $ pulumi up
 
 //Initialize new pulumi stack in the format pulumi stack init <org name>/<project>/<stack>
+
 $ pulumi stack init pulumi/sample-iam/prod
 $ pulumi stack tag set environment prod
 $ pulumi up
 
-
 ```
-
 
 **Step 2:** Create the pulumi stack **sample-eks** and set stack tag "key:value" = "environment:dev". Update the `index.ts` file with the relevant code block as shown below, download the additional npm packages for EKS and Kubernetes and run `pulumi up`
 
@@ -140,7 +135,6 @@ import * as pulumi from "@pulumi/pulumi";
 const env = pulumi.getStack();
 const iamstack = new pulumi.StackReference(`pulumi/sample-iam/${env}`);
 
-const clusterAdminRoleArn = iamstack.getOutput("clusterAdminRoleArn")
 const AutomationRoleArn = iamstack.getOutput("AutomationRoleArn")
 
 /*
@@ -161,12 +155,6 @@ const cluster = new eks.Cluster("eks-cluster", {
     warmIpTarget    : 4,
   },
   roleMappings      : [
-    // Provides full administrator cluster access to the k8s cluster
-    {
-      groups    : ["system:masters"],
-      roleArn   : clusterAdminRoleArn,
-      username  : "pulumi:admin-usr",
-    },
     // Map IAM role arn "AutomationRoleArn" to the k8s user with name "automation-usr", e.g. gitlab CI
     {
       groups    : ["pulumi:automation-grp"],
@@ -179,37 +167,9 @@ const cluster = new eks.Cluster("eks-cluster", {
 export const clusterName = cluster.eksCluster.name;
 
 /*
- * Single Step deployment of k8s RBAC configuration for user1, and user2
+ * Single Step deployment of k8s RBAC configuration
  */
 
-// Grant cluster admin access to all admins with k8s ClusterRole and ClusterRoleBinding
-new k8s.rbac.v1.ClusterRole("clusterAdminRole", {
-  metadata: {
-    name: "clusterAdminRole",
-  },
-  rules: [{
-    apiGroups: ["*"],
-    resources: ["*"],
-    verbs: ["*"],
-  }]
-}, {provider: cluster.provider});
-
-new k8s.rbac.v1.ClusterRoleBinding("cluster-admin-binding", {
-  metadata: {
-    name: "cluster-admin-binding",
-  },
-  subjects: [{
-     kind: "User",
-     name: "pulumi:admin-usr",
-  }],
-  roleRef: {
-    kind: "ClusterRole",
-    name: "clusterAdminRole",
-    apiGroup: "rbac.authorization.k8s.io",
-  },
-}, {provider: cluster.provider});
-
-// User2 called automation-usr for users that have permissions to all k8s resources in the namespace automation
 new k8s.rbac.v1.Role("AutomationRole", {
   metadata: {
     name: "AutomationRole",
@@ -245,10 +205,10 @@ $ npm install --save @pulumi/eks @pulumi/kubernetes
 $ pulumi up
 
 //Initialize new pulumi stack in the format pulumi stack init <org name>/<project>/<stack>
+
 $ pulumi stack init pulumi/sample-eks/prod
 $ pulumi stack tag set environment prod
 $ pulumi up
-
 
 ```
 
@@ -325,9 +285,11 @@ $ npm install --save @pulumi/kubernetes @pulumi/docker
 $ pulumi up
 
 //Initialize new pulumi stack
+
 $ pulumi stack init pulumi/sample-eks/prod
 $ pulumi stack tag set environment prod
 $ pulumi up
+
 ```
 
 ## Using Gitlab Pipelines with the “six” Pulumi stacks in environment:dev and environment:prod
