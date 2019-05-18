@@ -63,7 +63,7 @@ Let's now work through our example with Gitlab Pipelines.
 
 If you run `pulumi` from any branch other than the `master` branch, you will hit an error that the `PULUMI_ACCESS_TOKEN` environment variable cannot be accessed. You can fix this by specifying a wildcard regex to allow specific branches to be able to access the secret environment variables. Please refer to the [GitLab documentation](https://gitlab.com/help/user/project/protected_branches.md) to understand this better.
 
-First we set up “three” Pulumi stacks: **sample-iam**; **sample-eks** and **sample-k8sApp** with stack tag:`environment:dev` 
+First we set up “three” Pulumi stacks: **sample-iam**; **sample-eks** and **sample-k8sapp** with stack tag:`environment:dev` 
 
 **Step 1:** Create the pulumi stack "sample-IAM" and set stack tag "key:value" = "environment:dev". Update the `index.ts` file with the relevant code block as shown below and run `pulumi up `
 
