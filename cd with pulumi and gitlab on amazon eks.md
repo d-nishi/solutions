@@ -1,7 +1,7 @@
 ![alt text](https://github.com/d-nishi/solutions/blob/master/featured-image-gitlab.png)
 # Continuous Delivery with Gitlab and Pulumi on Amazon EKS
 
-Authors: [Nishi Davidson](https://pulumi.quip.com/eLPAEA81Pyv) and [Sean Gillespie](https://pulumi.quip.com/DbWAEA1i3Dl)
+Authors: [Nishi Davidson](https://github.com/d-nishi) and [Sean Gillespie](https://github.com/swgillespie)
 Date: 05/16/2019
 
 ## Prerequisites
@@ -21,7 +21,7 @@ Pulumi [Projects](https://pulumi.io/reference/project.html) and [stacks](https:/
 
 ![alt text](https://github.com/d-nishi/solutions/blob/master/monolith.png)
 
-* **Micro-stacks project/stack structure: **A project broken into separately managed smaller projects, often across different dimensions. 
+* **Micro-stacks project/stack structure:** A project broken into separately managed smaller projects, often across different dimensions. 
 
 ![alt text](https://github.com/d-nishi/solutions/blob/master/microstack.png)
 
