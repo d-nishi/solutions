@@ -47,7 +47,7 @@ Let's now work through our example with Gitlab Pipelines.
 2. We created 3 Gitlab projects called **sample-iam**, **sample-eks** and **sample-k8sapp**
 3. We have 2 pipelines: **environment:dev** and **environment:prod**
     1. In the two pipelines, we have a total of “six” pulumi stacks: 
-        1. **pulumi/sample-IAM/dev** and **pulumi/sample-iam/prod**
+        1. **pulumi/sample-iam/dev** and **pulumi/sample-iam/prod**
         2. **pulumi/sample-eks/dev** and **pulumi/sample-eks/prod**
         3. **pulumi/sample-k8sapp/dev** and **pulumi/sample-k8sapp/prod**
     2. **pulumi/sample-iam/dev** stack will trigger the downstream stack **pulumi/sample-eks/dev** provided the cycle of **pulumi preview → pulumi deploy** completes without any failure. 
