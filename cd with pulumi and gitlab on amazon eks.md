@@ -133,9 +133,8 @@ $ pulumi new aws-typescript --dir pulumi/sample-eks/dev
 ```
 
 Update the `index.ts` file with the relevant code block as shown below:
-```
-$ cat index.ts
 
+```
 import * as aws from "@pulumi/aws";
 import * as awsx from "@pulumi/awsx";
 import * as eks from "@pulumi/eks";
@@ -212,7 +211,7 @@ new k8s.rbac.v1.RoleBinding("automation-binding", {
 export const kubeconfig = cluster.kubeconfig.apply(JSON.stringify)
 ```
 
-Let's download the additional npm packages for EKS and Kubernetes and run `pulumi up`. We then initialize a new stack tag “key:value" = "environment:prod" and run  `pulumi up` with the same `index.ts` file.
+Let's download the additional npm packages for EKS and Kubernetes and run `pulumi up` and initialize a new stack tag “key:value" = "environment:prod" to run  `pulumi up` with the same `index.ts` file.
 
 ```
 $ npm install --save @pulumi/eks @pulumi/kubernetes
