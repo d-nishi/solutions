@@ -124,7 +124,7 @@ We then initialize a new stack tag “key:value" = "environment:prod" and run  `
 ```
 $ pulumi new aws-typescript --dir pulumi/sample-eks/dev
 
-$ cat index.ts**
+$ cat index.ts
 
 import * as aws from "@pulumi/aws";
 import * as awsx from "@pulumi/awsx";
