@@ -1,5 +1,5 @@
 ![alt text](https://github.com/d-nishi/solutions/blob/master/featured-image-gitlab.png)
-# Continuous Delivery with Gitlab and Pulumi on Amazon EKS
+# Continuous Delivery with GitLab and Pulumi on Amazon EKS
 
 Authors: [Nishi Davidson](https://github.com/d-nishi) and [Sean Gillespie](https://github.com/swgillespie)
 Date: 05/16/2019
@@ -41,9 +41,9 @@ Please read more about [how to manage stack tags here](https://pulumi.io/referen
 
 ![alt text](https://github.com/d-nishi/solutions/blob/master/microstack-environment.png)
 
-Let's now work through our example with Gitlab Pipelines.
+Let's now work through our example with GitLab Pipelines.
 
-## Gitlab Pipeline by Environment - Example 
+## GitLab Pipeline by Environment - Example 
 
 1. We created a Gitlab Group called **pulumi**
 2. We created three Gitlab projects called **sample-iam**, **sample-eks** and **sample-k8sapp**
