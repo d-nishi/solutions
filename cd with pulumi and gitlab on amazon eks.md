@@ -4,6 +4,8 @@
 Authors: [Nishi Davidson](https://github.com/d-nishi) and [Sean Gillespie](https://github.com/swgillespie)
 Date: 05/16/2019
 
+In this blog we will discuss how to use Pulumi SDKs to integrate continuous delivery with GitLab tools for your Kubernetes workloads on Amazon EKS. Technically this entire flow of work should work on any Kubernetes cluster aka Azure AKS and Google's GKE.
+
 ## Prerequisites
 
 * An account on [https://app.pulumi.com](https://app.pulumi.com/) with an organization. Sign-in using your GitLab credentials. Pulumi can also be run from anywhere and the Pulumi application and infrastructure code can be hosted anywhere. We will use the latter flow in our scenario.
@@ -14,14 +16,14 @@ Date: 05/16/2019
 
 ### Organization of Pulumi Projects and Pulumi Stacks
 
-All users in the Pulumi service will start with the hierarchy of an organization. This can be a specific Github, Gitlab or Atlassian organization or your solo organization. Inside each organization, users create Pulumi projects and stacks.
+All users in the Pulumi service will start with the hierarchy of an organization. This can be a specific GitHub, GitLab or Atlassian organization or your solo organization. Inside each organization, users create Pulumi projects and stacks.
 Pulumi [Projects](https://pulumi.io/reference/project.html) and [stacks](https://pulumi.io/reference/stack.html) are intentionally flexible to accommodate diverse needs across teams, applications, and infrastructure scenarios. Just like Git repos that work with varying approaches Pulumi projects and stacks allow you to organize your code within them. Immediate options include:
 
-* **Monolithic project/stack structure:** A single project defines the infrastructure and application resources for an entire vertical service.
+* **Monolithic project/stack structure:** A single project defines the infrastructure and application resources for an entire vertical service as represented in the image below:
 
 ![alt text](https://github.com/d-nishi/solutions/blob/master/monolith.png)
 
-* **Micro-stacks project/stack structure:** A project broken into separately managed smaller projects, often across different dimensions. 
+* **Micro-stacks project/stack structure:** A project broken into separately managed smaller projects, often across different dimensions as represented in the image below:
 
 ![alt text](https://github.com/d-nishi/solutions/blob/master/microstack.png)
 
@@ -44,9 +46,9 @@ Let's now work through our example with Gitlab Pipelines.
 ## Gitlab Pipeline by Environment - Example 
 
 1. We created a Gitlab Group called **pulumi**
-2. We created 3 Gitlab projects called **sample-iam**, **sample-eks** and **sample-k8sapp**
-3. We have 2 pipelines: **environment:dev** and **environment:prod**
-    1. In the two pipelines, we have a total of “six” pulumi stacks: 
+2. We created three Gitlab projects called **sample-iam**, **sample-eks** and **sample-k8sapp**
+3. We have two pipelines: **environment:dev** and **environment:prod**
+    1. In the two pipelines, we have a total of six pulumi stacks: 
         1. **pulumi/sample-iam/dev** and **pulumi/sample-iam/prod**
         2. **pulumi/sample-eks/dev** and **pulumi/sample-eks/prod**
         3. **pulumi/sample-k8sapp/dev** and **pulumi/sample-k8sapp/prod**
@@ -65,13 +67,16 @@ If you run `pulumi` from any branch other than the `master` branch, you will hit
 
 First we set up “three” Pulumi stacks: **sample-iam**; **sample-eks** and **sample-k8sapp** with stack tag:`environment:dev` 
 
-**Step 1:** Create the pulumi stack "sample-IAM" and set stack tag "key:value" = "environment:dev". Update the `index.ts` file with the relevant code block as shown below and run `pulumi up `
+**Step 1:** Create the pulumi stack "sample-IAM" and set stack tag "key:value" = "environment:dev". 
 
-We then initialize a new stack tag “key:value" = "environment:prod" and run  `pulumi up` with the same `index.ts` file
+We update the `index.ts` file with the relevant code block as shown below and run `pulumi up `. We then initialize a new stack tag “key:value" = "environment:prod" and run  `pulumi up` with the same `index.ts` file.
 
 ```
 $ pulumi new aws-typescript --dir pulumi/sample-iam/dev
 
+```
+
+```
 $ cat index.ts
 
 import * as aws from "@pulumi/aws";
@@ -106,7 +111,8 @@ function createIAMRole(name: string): aws.iam.Role {
     // Administer Automation role for use in pipelines, e.g. gitlab CI, Teamcity, etc.
     export const AutomationRole = createIAMRole("AutomationRole");
     export const AutomationRoleArn = AutomationRole.arn;
-    
+```
+```
 $ pulumi up
 
 //Initialize new pulumi stack in the format pulumi stack init <org name>/<project>/<stack>
@@ -123,7 +129,9 @@ We then initialize a new stack tag “key:value" = "environment:prod" and run  `
 
 ```
 $ pulumi new aws-typescript --dir pulumi/sample-eks/dev
+```
 
+```
 $ cat index.ts
 
 import * as aws from "@pulumi/aws";
@@ -200,7 +208,9 @@ new k8s.rbac.v1.RoleBinding("automation-binding", {
 }, {provider: cluster.provider});
 
 export const kubeconfig = cluster.kubeconfig.apply(JSON.stringify)
+```
 
+```
 $ npm install --save @pulumi/eks @pulumi/kubernetes
 $ pulumi up
 
@@ -212,13 +222,16 @@ $ pulumi up
 
 ```
 
-**Step 3:** Create the pulumi stack "sample-EKS" and set stack tag "key:value" = "environment:dev". Update the `index.ts` file with the relevant code block as shown below, download the additional npm packages for EKS and Kubernetes and run `pulumi up`
+**Step 3:** Create the pulumi stack "sample-EKS" and set stack tag "key:value" = "environment:dev". 
 
-We then initialize a new stack tag “key:value" = "environment:prod" and run  `pulumi up` with the same `index.ts` file
+We update the `index.ts` file with the relevant code block as shown below, download the additional npm packages for EKS and Kubernetes and run `pulumi up`. We then initialize a new stack tag “key:value" = "environment:prod" and run  `pulumi up` with the same `index.ts` file.
 
 ```
 $ pulumi new aws-typescript --dir pulumi/sample-k8sapp/dev 
 
+```
+
+```
 $ cat index.ts
 
 import * as aws from "@pulumi/aws";
@@ -281,6 +294,9 @@ const image1 = new docker.Image("breathe", {
       },
     }, { provider: k8sProvider });**
 
+```
+
+```
 $ npm install --save @pulumi/kubernetes @pulumi/docker
 $ pulumi up
 
@@ -331,8 +347,8 @@ Update EKS:
 
 This file describes a three-stage pipeline for the `sample-iam` project:
 
-1. First, we run a preview for the requested deployment environment, failing the pipeline if the preview fails
-2. If the preview was successful, we run `pulumi update`, which deploys the IAM changes
+1. First, we run a preview for the requested deployment environment, failing the pipeline if the preview fails.
+2. If the preview was successful, we run `pulumi update`, which deploys the IAM changes.
 3. Finally, we trigger the pipeline in `pulumi-gilab/sample-eks`, which triggers the next pipeline in our pipeline daisy chain illustrated in the above image.
 
 Despite being powerful, conceptually this setup is quite simple and doesn't require much code to get right.
