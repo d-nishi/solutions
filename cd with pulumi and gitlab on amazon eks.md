@@ -4,7 +4,7 @@
 Authors: [Nishi Davidson](https://github.com/d-nishi) and [Sean Gillespie](https://github.com/swgillespie)
 Date: 05/16/2019
 
-In this blog we will discuss how to use Pulumi SDKs to integrate continuous delivery with GitLab tools for your Kubernetes workloads on Amazon EKS. Technically this entire flow of work should work on any Kubernetes cluster aka Azure AKS and Google's GKE.
+In this blog, we will work through an example that shows how to use Pulumi SDKs to enable GitLab based continuous delivery with your Kubernetes workloads on Amazon EKS. This entire flow should work seamlessly on any Kubernetes cluster aka Azure AKS and Google's GKE.
 
 ## Prerequisites
 
