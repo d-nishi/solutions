@@ -69,15 +69,16 @@ First we set up “three” Pulumi stacks: **sample-iam**; **sample-eks** and **
 
 **Step 1:** Create the pulumi stack "sample-IAM" and set stack tag "key:value" = "environment:dev". 
 
-We update the `index.ts` file with the relevant code block as shown below and run `pulumi up `. We then initialize a new stack tag “key:value" = "environment:prod" and run  `pulumi up` with the same `index.ts` file.
+We update the `index.ts` file with the relevant code block as shown below and run `pulumi up `. 
 
 ```
 $ pulumi new aws-typescript --dir pulumi/sample-iam/dev
 
 ```
 
+Let's run  `pulumi up` with the following `index.ts` file.
+
 ```
-$ cat index.ts
 
 import * as aws from "@pulumi/aws";
 
@@ -112,6 +113,8 @@ function createIAMRole(name: string): aws.iam.Role {
     export const AutomationRole = createIAMRole("AutomationRole");
     export const AutomationRoleArn = AutomationRole.arn;
 ```
+We then initialize a new stack tag “key:value" = "environment:prod" and run  `pulumi up` with the same `index.ts` file.
+
 ```
 $ pulumi up
 
@@ -123,14 +126,13 @@ $ pulumi up
 
 ```
 
-**Step 2:** Create the pulumi stack **sample-eks** and set stack tag "key:value" = "environment:dev". Update the `index.ts` file with the relevant code block as shown below, download the additional npm packages for EKS and Kubernetes and run `pulumi up`
-
-We then initialize a new stack tag “key:value" = "environment:prod" and run  `pulumi up` with the same `index.ts` file
+**Step 2:** Create the pulumi stack **sample-eks** and set stack tag "key:value" = "environment:dev". 
 
 ```
 $ pulumi new aws-typescript --dir pulumi/sample-eks/dev
 ```
 
+Update the `index.ts` file with the relevant code block as shown below:
 ```
 $ cat index.ts
 
@@ -210,6 +212,8 @@ new k8s.rbac.v1.RoleBinding("automation-binding", {
 export const kubeconfig = cluster.kubeconfig.apply(JSON.stringify)
 ```
 
+Let's download the additional npm packages for EKS and Kubernetes and run `pulumi up`. We then initialize a new stack tag “key:value" = "environment:prod" and run  `pulumi up` with the same `index.ts` file.
+
 ```
 $ npm install --save @pulumi/eks @pulumi/kubernetes
 $ pulumi up
@@ -224,16 +228,16 @@ $ pulumi up
 
 **Step 3:** Create the pulumi stack "sample-EKS" and set stack tag "key:value" = "environment:dev". 
 
-We update the `index.ts` file with the relevant code block as shown below, download the additional npm packages for EKS and Kubernetes and run `pulumi up`. We then initialize a new stack tag “key:value" = "environment:prod" and run  `pulumi up` with the same `index.ts` file.
+Let's update the `index.ts` file with the relevant code block as shown below:
 
 ```
 $ pulumi new aws-typescript --dir pulumi/sample-k8sapp/dev 
 
 ```
 
-```
-$ cat index.ts
+We download the additional npm packages for EKS and Kubernetes and run `pulumi up`. 
 
+```
 import * as aws from "@pulumi/aws";
 import * as docker from "@pulumi/docker";
 import * as k8s from "@pulumi/kubernetes";
@@ -295,6 +299,8 @@ const image1 = new docker.Image("breathe", {
     }, { provider: k8sProvider });**
 
 ```
+
+Now we initialize a new stack tag “key:value" = "environment:prod" and run  `pulumi up` with the same `index.ts` file.
 
 ```
 $ npm install --save @pulumi/kubernetes @pulumi/docker
