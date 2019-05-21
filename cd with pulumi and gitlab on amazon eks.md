@@ -51,7 +51,7 @@ Let's now work through our example with GitLab Pipelines. Note: Please replace t
    * **<span style="color:red"> ***org-name-in-pulumi***</span>/sample-eks/dev** and **<span style="color:red"> ***org-name-in-pulumi***</span>/sample-eks/prod**.
    * **<span style="color:red"> ***org-name-in-pulumi***</span>/sample-k8sapp/dev** and **<span style="color:red"> ***org-name-in-pulumi***</span>/sample-k8sapp/prod**. 
 
-**<span style="color:red"> **org-name-in-pulumi**</span>/sample-iam/dev** stack will trigger the downstream stack **<span style="color:red"> ***org-name-in-pulumi***</span>/sample-eks/dev** provided the cycle of **pulumi preview → pulumi deploy** completes without any failure. 
+**<span style="color:red"> ***org-name-in-pulumi***</span>/sample-iam/dev** stack will trigger the downstream stack **<span style="color:red"> ***org-name-in-pulumi***</span>/sample-eks/dev** provided the cycle of **pulumi preview → pulumi deploy** completes without any failure. 
 
 Similarly, **<span style="color:red"> ***org-name-in-pulumi***</span>/sample-eks/dev** will trigger the downstream stack **<span style="color:red"> ***org-name-in-pulumi***</span>/sample-k8sapp/dev** provided the cycle of **pulumi preview → pulumi deploy** completes without any failure.
 
