@@ -43,25 +43,24 @@ Please read more about [how to manage stack tags here](https://pulumi.io/referen
 
 Let's now work through our example with GitLab Pipelines.
 
-## GitLab Pipeline by Environment - Example 
+## GitLab Pipeline by Environment: 
 
 1. We created a GitLab Group called **pulumi**.
 2. We created three GitLab projects called **sample-iam**, **sample-eks** and **sample-k8sapp**.
-3. We have two pipelines: **environment:dev** and **environment:prod**.
-    1. In the two pipelines, we have a total of six pulumi stacks: 
-        1. **pulumi/sample-iam/dev** and **pulumi/sample-iam/prod**.
-        2. **pulumi/sample-eks/dev** and **pulumi/sample-eks/prod**.
-        3. **pulumi/sample-k8sapp/dev** and **pulumi/sample-k8sapp/prod**.
-    2. **pulumi/sample-iam/dev** stack will trigger the downstream stack **pulumi/sample-eks/dev** provided the cycle of **pulumi preview → pulumi deploy** completes without any failure. 
-    3. **pulumi/sample-eks/dev** will trigger the downstream stack **pulumi/sample-k8sapp/dev** provided the cycle of **pulumi preview → pulumi deploy** completes without any failure.
+3. We have two pipelines: **environment:dev** and **environment:prod**. In the two pipelines, we have a total of six pulumi stacks: 
+   * **pulumi/sample-iam/dev** and **pulumi/sample-iam/prod**.
+   * **pulumi/sample-eks/dev** and **pulumi/sample-eks/prod**.
+   * **pulumi/sample-k8sapp/dev** and **pulumi/sample-k8sapp/prod**. 
+
+**pulumi/sample-iam/dev** stack will trigger the downstream stack **pulumi/sample-eks/dev** provided the cycle of **pulumi preview → pulumi deploy** completes without any failure. Similarly, **pulumi/sample-eks/dev** will trigger the downstream stack **pulumi/sample-k8sapp/dev** provided the cycle of **pulumi preview → pulumi deploy** completes without any failure.
 
 ![alt text](https://github.com/d-nishi/solutions/blob/master/microstack-environment-gitlab.png)
 
 4. To use Pulumi within GitLab CI, there are a few environment variables you’ll need to set for each build.
-    1. The first is `PULUMI_ACCESS_TOKEN`, which is required to authenticate with **pulumi.com** in order to perform the preview or update. You can create a new Pulumi access token specifically for your CI/CD job on your [Pulumi Account page](https://app.pulumi.com/account/tokens?__hstc=228626179.56681581cf02b2e77b51bd3037fb698a.1554407757799.1557357031878.1557359155284.54&__hssc=228626179.2.1557359155284&__hsfp=3057520729).
-    2. Next, you will also need to set environment variables specific to your cloud resource provider. For example, if your stack is managing resources on AWS, `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+   * The first is `PULUMI_ACCESS_TOKEN`, which is required to authenticate with **pulumi.com** in order to perform the preview or update. You can create a new Pulumi access token specifically for your CI/CD job on your [Pulumi Account page](https://app.pulumi.com/account/tokens?__hstc=228626179.56681581cf02b2e77b51bd3037fb698a.1554407757799.1557357031878.1557359155284.54&__hssc=228626179.2.1557359155284&__hsfp=3057520729).
+   * Next, you will also need to set environment variables specific to your cloud resource provider. For example, if your stack is managing resources on AWS, `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
 
-## Create Pulumi stacks and push the files to your GitLab project
+## Create Pulumi stacks and push the files to your GitLab project:
 
 If you run `pulumi` from any branch other than the `master` branch, you will hit an error that the `PULUMI_ACCESS_TOKEN` environment variable cannot be accessed. You can fix this by specifying a wildcard regex to allow specific branches to be able to access the secret environment variables. Please refer to the [GitLab documentation](https://gitlab.com/help/user/project/protected_branches.md) to understand this better.
 
@@ -79,7 +78,6 @@ $ pulumi new aws-typescript --dir pulumi/sample-iam/dev
 Let's run  `pulumi up` with the following `index.ts` file.
 
 ```
-
 import * as aws from "@pulumi/aws";
 
 /*
