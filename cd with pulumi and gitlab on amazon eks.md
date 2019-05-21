@@ -29,7 +29,7 @@ Pulumi [Projects](https://pulumi.io/reference/project.html) and [stacks](https:/
 
 Working with Inter-Stack Dependencies with the latter option is more suited in a production setup giving users more flexibility and boundaries between their teams. We will use this structure in our example below. For more information on Pulumi projects and stacks, please refer to our documentation [here](https://pulumi.io/reference/organizing-stacks-projects.html).
 
-### Tagging Pulumi Stacks to create Environments:
+### Use Tags to Group Pulumi Stacks to create Environments:
 
 * Pulumi Stacks have associated metadata in the form of key/value tags. 
 * You can assign custom tags to stacks (when logged into the [web backend](https://pulumi.io/reference/state.html)) to customize how stacks are listed in the [Pulumi Cloud Console](https://app.pulumi.com/?__hstc=228626179.56681581cf02b2e77b51bd3037fb698a.1554407757799.1557330248351.1557339846440.52&__hssc=228626179.2.1557339846440&__hsfp=3057520729). 
@@ -65,7 +65,7 @@ Let's now work through our example with GitLab Pipelines.
 
 If you run `pulumi` from any branch other than the `master` branch, you will hit an error that the `PULUMI_ACCESS_TOKEN` environment variable cannot be accessed. You can fix this by specifying a wildcard regex to allow specific branches to be able to access the secret environment variables. Please refer to the [GitLab documentation](https://gitlab.com/help/user/project/protected_branches.md) to understand this better.
 
-First we set up “three” Pulumi stacks: **sample-iam**; **sample-eks** and **sample-k8sapp** with stack tag:`environment:dev` 
+First we set up “three” Pulumi stacks: **sample-iam**; **sample-eks** and **sample-k8sapp** with group stack tag:`environment:dev` 
 
 **Step 1:** Create the pulumi stack "sample-IAM" and set stack tag "key:value" = "environment:dev". 
 
@@ -113,7 +113,7 @@ function createIAMRole(name: string): aws.iam.Role {
     export const AutomationRole = createIAMRole("AutomationRole");
     export const AutomationRoleArn = AutomationRole.arn;
 ```
-We then initialize a new stack tag “key:value" = "environment:prod" and run  `pulumi up` with the same `index.ts` file.
+We then group the stack by initializing it with a new stack tag “key:value" = "environment:prod" and run  `pulumi up` with the same `index.ts` file.
 
 ```
 $ pulumi up
@@ -299,7 +299,7 @@ const image1 = new docker.Image("breathe", {
 
 ```
 
-Now we initialize a new stack tag “key:value" = "environment:prod" and run  `pulumi up` with the same `index.ts` file.
+Now we group a new stack by initializing it with a new stack tag “key:value" = "environment:prod" and run  `pulumi up` with the same `index.ts` file.
 
 ```
 $ npm install --save @pulumi/kubernetes @pulumi/docker
