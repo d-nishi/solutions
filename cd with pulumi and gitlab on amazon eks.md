@@ -51,7 +51,9 @@ Let's now work through our example with GitLab Pipelines. Note: Please replace t
    * **<span style="color:red"> ***org-name-in-pulumi***</span>/sample-eks/dev** and **<span style="color:red"> ***org-name-in-pulumi***</span>/sample-eks/prod**.
    * **<span style="color:red"> ***org-name-in-pulumi***</span>/sample-k8sapp/dev** and **<span style="color:red"> ***org-name-in-pulumi***</span>/sample-k8sapp/prod**. 
 
-**<span style="color:red"> **org-name-in-pulumi**</span>/sample-iam/dev** stack will trigger the downstream stack **<span style="color:red"> ***org-name-in-pulumi***</span>/sample-eks/dev** provided the cycle of **pulumi preview → pulumi deploy** completes without any failure. Similarly, **<span style="color:red"> ***org-name-in-pulumi***</span>/sample-eks/dev** will trigger the downstream stack **<span style="color:red"> ***org-name-in-pulumi***</span>/sample-k8sapp/dev** provided the cycle of **pulumi preview → pulumi deploy** completes without any failure.
+**<span style="color:red"> **org-name-in-pulumi**</span>/sample-iam/dev** stack will trigger the downstream stack **<span style="color:red"> ***org-name-in-pulumi***</span>/sample-eks/dev** provided the cycle of **pulumi preview → pulumi deploy** completes without any failure. 
+
+Similarly, **<span style="color:red"> ***org-name-in-pulumi***</span>/sample-eks/dev** will trigger the downstream stack **<span style="color:red"> ***org-name-in-pulumi***</span>/sample-k8sapp/dev** provided the cycle of **pulumi preview → pulumi deploy** completes without any failure.
 
 ![alt text](https://github.com/d-nishi/solutions/blob/master/microstack-environment-gitlab.png)
 
@@ -69,8 +71,8 @@ First we set up three Pulumi stacks: **sample-iam**; **sample-eks** and **sample
 We update the `index.ts` file with the relevant code block as shown below and run `pulumi up `. 
 
 ```
-$ pulumi new aws-typescript --dir <span style="color:red"> **org-name-in-pulumi**</span>/sample-iam/dev
-$ cd <span style="color:red"> ***org-name-in-pulumi***</span>/sample-iam/dev
+$ pulumi new aws-typescript --dir <org-name-in-pulumi>/sample-iam/dev
+$ cd <org-name-in-pulumi>/sample-iam/dev
 
 ```
 
@@ -112,7 +114,7 @@ $ pulumi up
 
 #Initialize new pulumi stack in the format pulumi stack init <org name>/<project>/<stack>
 
-$ pulumi stack init <span style="color:red"> ***org-name-in-pulumi***</span>/sample-iam/prod
+$ pulumi stack init <org-name-in-pulumi>/sample-iam/prod
 $ pulumi stack tag set environment prod
 $ pulumi up
 
@@ -121,8 +123,8 @@ $ pulumi up
 **Step 2:** Create the pulumi stack **sample-eks** and set stack tag "key:value" = "environment:dev". 
 
 ```
-$ pulumi new aws-typescript --dir <span style="color:red"> **org-name-in-pulumi**</span>/sample-eks/dev
-$ cd <span style="color:red"> **org-name-in-pulumi**</span>/sample-eks/dev
+$ pulumi new aws-typescript --dir <org-name-in-pulumi>/sample-eks/dev
+$ cd <org-name-in-pulumi>/sample-eks/dev
 ```
 
 Update the `index.ts` file with the relevant code block as shown below:
@@ -135,7 +137,7 @@ import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
 
 const env = pulumi.getStack();
-const iamstack = new pulumi.StackReference(`<span style="color:red"> ***org-name-in-pulumi***</span>/sample-iam/${env}`);
+const iamstack = new pulumi.StackReference(`<org-name-in-pulumi>/sample-iam/${env}`);
 
 const automationRoleArn = iamstack.getOutput("automationRoleArn")
 
@@ -212,7 +214,7 @@ $ pulumi up
 
 # Initialize new pulumi stack in the format pulumi stack init <org name in pulumi>/<project>/<stack>
 
-$ pulumi stack init <span style="color:red"> ***org-name-in-pulumi***</span>/sample-eks/prod
+$ pulumi stack init <org-name-in-pulumi>/sample-eks/prod
 $ pulumi stack tag set environment prod
 $ pulumi up
 ```
@@ -221,8 +223,8 @@ $ pulumi up
 We will then update the `index.ts` file with the relevant code block as shown below:
 
 ```
-$ pulumi new aws-typescript --dir <span style="color:red"> ***org-name-in-pulumi***</span>/sample-k8sapp/dev
-$ cd <span style="color:red"> ***org-name-in-pulumi***</span>/sample-k8sapp/dev
+$ pulumi new aws-typescript --dir <org-name-in-pulumi>/sample-k8sapp/dev
+$ cd <org-name-in-pulumi>/sample-k8sapp/dev
 ```
 
 ```typescript
@@ -295,7 +297,7 @@ $ pulumi up
 
 #Initialize new pulumi stack
 
-$ pulumi stack init <span style="color:red"> ***org-name-in-pulumi***</span>/sample-eks/prod
+$ pulumi stack init <org-name-in-pulumi>/sample-eks/prod
 $ pulumi stack tag set environment prod
 $ pulumi up
 
