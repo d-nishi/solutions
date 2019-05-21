@@ -4,7 +4,7 @@
 Authors: [Nishi Davidson](https://github.com/d-nishi) and [Sean Gillespie](https://github.com/swgillespie)
 Date: 05/16/2019
 
-In this blog, we will work through an example that shows how to use Pulumi to enable GitLab-based continuous delivery with your Kubernetes workloads on Amazon EKS. This integration should work seamlessly for any Kubernetes cluster aka Azure AKS or Google GKE. You will however need to use the relevant Pulumi libraries for Azure and Google to create the related cloud services. 
+In this blog, we will work through an example that shows how to use Pulumi to enable GitLab-based continuous delivery with your Kubernetes workloads on Amazon EKS. This integration should work seamlessly for any Kubernetes cluster aka Azure AKS or Google GKE. You will however need to use the relevant Pulumi libraries for [Azure](https://github.com/pulumi/pulumi-azure) and [Google](https://github.com/pulumi/pulumi-gcp) to create the related cloud services. 
 
 ## Prerequisites
 
@@ -40,20 +40,20 @@ Please read more about [how to manage stack tags here](https://pulumi.io/referen
 
 ![alt text](https://github.com/d-nishi/solutions/blob/master/microstack-environment.png)
 
-Let's now work through our example with GitLab Pipelines. Note: Please replace the highlighted <span style="color:red"> ***org-name-in-pulumi***</span> below with your organization name to run through the steps successfully.
+Let's now work through our example with GitLab Pipelines. Note: Please replace the highlighted ***org-name-in-pulumi*** below with your organization name to run through the steps successfully.
 
 ## GitLab Pipeline by Environment: 
 
 1. We created a GitLab Group called **pulumi-gitlab**.
 2. We created three GitLab projects called **sample-iam**, **sample-eks** and **sample-k8sapp**. These projects match the project names in Pulumi SaaS platform.
 3. We have two pipelines: **environment:dev** and **environment:prod**. In the two pipelines, we have a total of six pulumi stacks: 
-   * **<span style="color:red"> ***org-name-in-pulumi***</span>/sample-iam/dev** and **<span style="color:red"> ***org-name-in-pulumi***</span>/sample-iam/prod**.
-   * **<span style="color:red"> ***org-name-in-pulumi***</span>/sample-eks/dev** and **<span style="color:red"> ***org-name-in-pulumi***</span>/sample-eks/prod**.
-   * **<span style="color:red"> ***org-name-in-pulumi***</span>/sample-k8sapp/dev** and **<span style="color:red"> ***org-name-in-pulumi***</span>/sample-k8sapp/prod**. 
+   * ***org-name-in-pulumi***/sample-iam/dev and ***org-name-in-pulumi***/sample-iam/prod.
+   * ***org-name-in-pulumi***>/sample-eks/dev and ***org-name-in-pulumi***/sample-eks/prod.
+   * ***org-name-in-pulumi***>/sample-k8sapp/dev and ***org-name-in-pulumi***>/sample-k8sapp/prod. 
 
-**<span style="color:red"> ***org-name-in-pulumi***</span>/sample-iam/dev** stack will trigger the downstream stack **<span style="color:red"> ***org-name-in-pulumi***</span>/sample-eks/dev** provided the cycle of **pulumi preview → pulumi deploy** completes without any failure. 
+***org-name-in-pulumi***/sample-iam/dev stack will trigger the downstream stack ***org-name-in-pulumi***/sample-eks/dev provided the cycle of **pulumi preview → pulumi deploy** completes without any failure. 
 
-Similarly, **<span style="color:red"> ***org-name-in-pulumi***</span>/sample-eks/dev** will trigger the downstream stack **<span style="color:red"> ***org-name-in-pulumi***</span>/sample-k8sapp/dev** provided the cycle of **pulumi preview → pulumi deploy** completes without any failure.
+Similarly, ***org-name-in-pulumi***/sample-eks/dev will trigger the downstream stack ***org-name-in-pulumi***/sample-k8sapp/dev provided the cycle of **pulumi preview → pulumi deploy** completes without any failure.
 
 ![alt text](https://github.com/d-nishi/solutions/blob/master/microstack-environment-gitlab.png)
 
@@ -234,7 +234,7 @@ import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
 
 const env = pulumi.getStack();
-const eksCluster = new pulumi.StackReference(`<span style="color:red"> ***org-name-in-pulumi***</span>/sample-eks/${env}`);
+const eksCluster = new pulumi.StackReference(`<org-name-in-pulumi>/sample-eks/${env}`);
 
 const kubeconfig = eksCluster.getOutput("kubeconfig");
 
