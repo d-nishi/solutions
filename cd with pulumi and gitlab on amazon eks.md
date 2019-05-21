@@ -35,7 +35,7 @@ Working with Inter-Stack Dependencies with the latter option is more suited in a
 * You can assign custom tags to stacks (when logged into the [web backend](https://pulumi.io/reference/state.html)) to customize how stacks are listed in the [Pulumi Cloud Console](https://app.pulumi.com/?__hstc=228626179.56681581cf02b2e77b51bd3037fb698a.1554407757799.1557330248351.1557339846440.52&__hssc=228626179.2.1557339846440&__hsfp=3057520729). 
     * In our example below we have two environments prod and dev. 
     * We group stacks by environment by assigning custom `environment` tags `prod` and `dev` to the respective stacks
-    * In the Pulumi Cloud Console, you’ll be able to group stacks by `Tag: environment:dev` and `Tag: environment:prod`. 
+    * In the Pulumi Cloud Console, you’ll be able to group stacks by Tag: `environment:dev` and Tag: `environment:prod`. 
     
 Please read more about [how to manage stack tags here](https://pulumi.io/reference/stack.html#stack-tags).
 
@@ -65,7 +65,7 @@ Let's now work through our example with GitLab Pipelines.
 
 If you run `pulumi` from any branch other than the `master` branch, you will hit an error that the `PULUMI_ACCESS_TOKEN` environment variable cannot be accessed. You can fix this by specifying a wildcard regex to allow specific branches to be able to access the secret environment variables. Please refer to the [GitLab documentation](https://gitlab.com/help/user/project/protected_branches.md) to understand this better.
 
-First we set up “three” Pulumi stacks: **sample-iam**; **sample-eks** and **sample-k8sapp** with group stack tag:`environment:dev` 
+First we set up three Pulumi stacks: **sample-iam**; **sample-eks** and **sample-k8sapp** with group stack tag: `environment:dev` 
 
 **Step 1:** Create the pulumi stack "sample-IAM" and set stack tag "key:value" = "environment:dev". 
 
@@ -313,7 +313,7 @@ $ pulumi up
 
 ```
 
-## Using Gitlab Pipelines with the “six” Pulumi stacks in environment:dev and environment:prod
+## Using GitLab Pipelines with the six Pulumi stacks in environment:dev and environment:prod
 
 GitLab pipelines are configured using `.gitlab-ci.yml` files in the root of each repository. GitLab Silver and above is capable of [running pipelines that cross project boundaries](https://docs.gitlab.com/ee/ci/multi_project_pipelines.html#passing-variables-to-a-downstream-pipeline), so we will be using that to construct our pipeline.
 
