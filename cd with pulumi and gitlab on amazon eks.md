@@ -16,8 +16,7 @@ In this blog, we will work through an example that shows how to use Pulumi to en
 
 ### Organization of Pulumi Projects and Pulumi Stacks
 
-All users in the Pulumi service will start with the hierarchy of an organization. This can be a specific GitHub, GitLab or Atlassian organization or your solo organization. Inside each organization, users create Pulumi projects and stacks.
-Pulumi [projects](https://pulumi.io/reference/project.html) and [stacks](https://pulumi.io/reference/stack.html) are intentionally flexible to accommodate the diverse needs across teams, applications, and infrastructure scenarios. Just like Git repos that work with varying approaches Pulumi projects and stacks allow you to organize your code within them. Immediate options include:
+All users in the Pulumi service will start with the hierarchy of an organization. This can be a specific GitHub, GitLab or Atlassian organization or your solo organization. Inside each organization, users create Pulumi projects and stacks.Pulumi [projects](https://pulumi.io/reference/project.html) and [stacks](https://pulumi.io/reference/stack.html) are intentionally flexible to accommodate the diverse needs across teams, applications, and infrastructure scenarios. Just like Git repos that work with varying approaches Pulumi projects and stacks allow you to organize your code within them. Immediate options include:
 
 * **Monolithic project/stack structure:** A single project defines the infrastructure and application resources for an entire vertical service as represented in the image below:
 
@@ -29,31 +28,30 @@ Pulumi [projects](https://pulumi.io/reference/project.html) and [stacks](https:/
 
 Working with Inter-Stack Dependencies with the latter option is more suited in a production setup giving users more flexibility and boundaries between their teams. We will use this structure in our example below. For more information on Pulumi projects and stacks, please refer to our documentation [here](https://pulumi.io/reference/organizing-stacks-projects.html).
 
-### Use Tags to Group Pulumi Stacks to create Environments:
+### Use Tags to group Pulumi Stacks as Environments:
 
 * Pulumi Stacks have associated metadata in the form of key/value tags. 
 * You can assign custom tags to stacks (when logged into the [web backend](https://pulumi.io/reference/state.html)) to customize how stacks are listed in the [Pulumi Cloud Console](https://app.pulumi.com/). 
     * In our example below we have two environments prod and dev. 
-    * We group stacks by environment by assigning custom `environment` tags `prod` and `dev` to the respective stacks
+    * To group stacks by environment we assign custom tags `environment: prod` and `environment: dev` to the respective stacks
     * In the Pulumi Cloud Console, you’ll be able to group stacks by tag: `environment:dev` and tag: `environment:prod`. 
     
 Please read more about [how to manage stack tags here](https://pulumi.io/reference/stack.html#stack-tags).
 
 ![alt text](https://github.com/d-nishi/solutions/blob/master/microstack-environment.png)
 
-Let's now work through our example with GitLab Pipelines. Note: Please replace the highlighted 
-<span style="color:red"> **<org-name-in-pulumi>**</span> below with your organization name to run through the steps successfully.
+Let's now work through our example with GitLab Pipelines. Note: Please replace the highlighted <span style="color:red"> **org-name-in-pulumi**</span> below with your organization name to run through the steps successfully.
 
 ## GitLab Pipeline by Environment: 
 
 1. We created a GitLab Group called **pulumi-gitlab**.
 2. We created three GitLab projects called **sample-iam**, **sample-eks** and **sample-k8sapp**. These projects match the project names in Pulumi SaaS platform.
 3. We have two pipelines: **environment:dev** and **environment:prod**. In the two pipelines, we have a total of six pulumi stacks: 
-   * **<org-name-in-pulumi>/sample-iam/dev** and **<org-name-in-pulumi>/sample-iam/prod**.
-   * **<org-name-in-pulumi>/sample-eks/dev** and **<org-name-in-pulumi>/sample-eks/prod**.
-   * **<org-name-in-pulumi>/sample-k8sapp/dev** and **<org-name-in-pulumi>/sample-k8sapp/prod**. 
+   * **<span style="color:red"> **org-name-in-pulumi**</span>/sample-iam/dev** and **<span style="color:red"> **org-name-in-pulumi**</span>/sample-iam/prod**.
+   * **<span style="color:red"> **org-name-in-pulumi**</span>/sample-eks/dev** and **<span style="color:red"> **org-name-in-pulumi**</span>/sample-eks/prod**.
+   * **<span style="color:red"> **org-name-in-pulumi**</span>/sample-k8sapp/dev** and **<span style="color:red"> **org-name-in-pulumi**</span>/sample-k8sapp/prod**. 
 
-**<org-name-in-pulumi>/sample-iam/dev** stack will trigger the downstream stack **<org-name-in-pulumi>/sample-eks/dev** provided the cycle of **pulumi preview → pulumi deploy** completes without any failure. Similarly, **<org-name-in-pulumi>/sample-eks/dev** will trigger the downstream stack **<org-name-in-pulumi>/sample-k8sapp/dev** provided the cycle of **pulumi preview → pulumi deploy** completes without any failure.
+**<span style="color:red"> **org-name-in-pulumi**</span>/sample-iam/dev** stack will trigger the downstream stack **<span style="color:red"> **org-name-in-pulumi**</span>/sample-eks/dev** provided the cycle of **pulumi preview → pulumi deploy** completes without any failure. Similarly, **<span style="color:red"> **org-name-in-pulumi**</span>/sample-eks/dev** will trigger the downstream stack **<span style="color:red"> **org-name-in-pulumi**</span>/sample-k8sapp/dev** provided the cycle of **pulumi preview → pulumi deploy** completes without any failure.
 
 ![alt text](https://github.com/d-nishi/solutions/blob/master/microstack-environment-gitlab.png)
 
@@ -71,8 +69,8 @@ First we set up three Pulumi stacks: **sample-iam**; **sample-eks** and **sample
 We update the `index.ts` file with the relevant code block as shown below and run `pulumi up `. 
 
 ```
-$ pulumi new aws-typescript --dir <org-name-in-pulumi>/sample-iam/dev
-$ cd <org-name-in-pulumi>/sample-iam/dev
+$ pulumi new aws-typescript --dir <span style="color:red"> **org-name-in-pulumi**</span>/sample-iam/dev
+$ cd <span style="color:red"> **org-name-in-pulumi**</span>/sample-iam/dev
 
 ```
 
@@ -114,7 +112,7 @@ $ pulumi up
 
 #Initialize new pulumi stack in the format pulumi stack init <org name>/<project>/<stack>
 
-$ pulumi stack init <org-name-in-pulumi>/sample-iam/prod
+$ pulumi stack init <span style="color:red"> **org-name-in-pulumi**</span>/sample-iam/prod
 $ pulumi stack tag set environment prod
 $ pulumi up
 
@@ -123,8 +121,8 @@ $ pulumi up
 **Step 2:** Create the pulumi stack **sample-eks** and set stack tag "key:value" = "environment:dev". 
 
 ```
-$ pulumi new aws-typescript --dir <org-name-in-pulumi>/sample-eks/dev
-$ cd <org-name-in-pulumi>/sample-eks/dev
+$ pulumi new aws-typescript --dir <span style="color:red"> **org-name-in-pulumi**</span>/sample-eks/dev
+$ cd <span style="color:red"> **org-name-in-pulumi**</span>/sample-eks/dev
 ```
 
 Update the `index.ts` file with the relevant code block as shown below:
@@ -137,7 +135,7 @@ import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
 
 const env = pulumi.getStack();
-const iamstack = new pulumi.StackReference(`<org-name-in-pulumi>/sample-iam/${env}`);
+const iamstack = new pulumi.StackReference(`<span style="color:red"> **org-name-in-pulumi**</span>/sample-iam/${env}`);
 
 const automationRoleArn = iamstack.getOutput("automationRoleArn")
 
@@ -214,7 +212,7 @@ $ pulumi up
 
 # Initialize new pulumi stack in the format pulumi stack init <org name in pulumi>/<project>/<stack>
 
-$ pulumi stack init <org-name-in-pulumi>/sample-eks/prod
+$ pulumi stack init <span style="color:red"> **org-name-in-pulumi**</span>/sample-eks/prod
 $ pulumi stack tag set environment prod
 $ pulumi up
 ```
@@ -223,8 +221,8 @@ $ pulumi up
 We will then update the `index.ts` file with the relevant code block as shown below:
 
 ```
-$ pulumi new aws-typescript --dir <org-name-in-pulumi>/sample-k8sapp/dev
-$ cd <org-name-in-pulumi>/sample-k8sapp/dev
+$ pulumi new aws-typescript --dir <span style="color:red"> **org-name-in-pulumi**</span>/sample-k8sapp/dev
+$ cd <span style="color:red"> **org-name-in-pulumi**</span>/sample-k8sapp/dev
 ```
 
 ```typescript
@@ -234,7 +232,7 @@ import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
 
 const env = pulumi.getStack();
-const eksCluster = new pulumi.StackReference(`<org-name-in-pulumi>/sample-eks/${env}`);
+const eksCluster = new pulumi.StackReference(`<span style="color:red"> **org-name-in-pulumi**</span>/sample-eks/${env}`);
 
 const kubeconfig = eksCluster.getOutput("kubeconfig");
 
@@ -297,7 +295,7 @@ $ pulumi up
 
 #Initialize new pulumi stack
 
-$ pulumi stack init <org-name-in-pulumi>/sample-eks/prod
+$ pulumi stack init <span style="color:red"> **org-name-in-pulumi**</span>/sample-eks/prod
 $ pulumi stack tag set environment prod
 $ pulumi up
 
