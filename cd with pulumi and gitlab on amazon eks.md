@@ -223,7 +223,7 @@ $ pulumi up
 
 ```
 
-**Step 3:** Create the pulumi stack "sample-EKS" and set stack tag "key:value" = "environment:dev". 
+**Step 3:** Create the pulumi stack "sample-eks" and set stack tag "key:value" = "environment:dev". 
 
 Let's update the `index.ts` file with the relevant code block as shown below:
 
