@@ -41,7 +41,7 @@ Please read more about [how to manage stack tags here](https://pulumi.io/referen
 
 ![alt text](https://github.com/d-nishi/solutions/blob/master/microstack-environment.png)
 
-Let's now work through our example with GitLab Pipelines. Note: Please replace the highlighted <span style="color:red">some **This is Red Bold.** <org-name-in-pulumi></span> below with your organization name to run through the steps successfully.
+Let's now work through our example with GitLab Pipelines. Note: Please replace the highlighted <span style="color:red">some **<org-name-in-pulumi>** text</span> below with your organization name to run through the steps successfully.
 
 ## GitLab Pipeline by Environment: 
 
