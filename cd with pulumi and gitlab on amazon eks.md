@@ -45,13 +45,13 @@ Let's now work through our example with GitLab Pipelines.
 
 ## GitLab Pipeline by Environment - Example 
 
-1. We created a GitLab Group called **pulumi**
-2. We created three GitLab projects called **sample-iam**, **sample-eks** and **sample-k8sapp**
-3. We have two pipelines: **environment:dev** and **environment:prod**
+1. We created a GitLab Group called **pulumi**.
+2. We created three GitLab projects called **sample-iam**, **sample-eks** and **sample-k8sapp**.
+3. We have two pipelines: **environment:dev** and **environment:prod**.
     1. In the two pipelines, we have a total of six pulumi stacks: 
-        1. **pulumi/sample-iam/dev** and **pulumi/sample-iam/prod**
-        2. **pulumi/sample-eks/dev** and **pulumi/sample-eks/prod**
-        3. **pulumi/sample-k8sapp/dev** and **pulumi/sample-k8sapp/prod**
+        1. **pulumi/sample-iam/dev** and **pulumi/sample-iam/prod**.
+        2. **pulumi/sample-eks/dev** and **pulumi/sample-eks/prod**.
+        3. **pulumi/sample-k8sapp/dev** and **pulumi/sample-k8sapp/prod**.
     2. **pulumi/sample-iam/dev** stack will trigger the downstream stack **pulumi/sample-eks/dev** provided the cycle of **pulumi preview → pulumi deploy** completes without any failure. 
     3. **pulumi/sample-eks/dev** will trigger the downstream stack **pulumi/sample-k8sapp/dev** provided the cycle of **pulumi preview → pulumi deploy** completes without any failure.
 
