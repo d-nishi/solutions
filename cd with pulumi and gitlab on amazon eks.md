@@ -45,8 +45,8 @@ Let's now work through our example with GitLab Pipelines.
 
 ## GitLab Pipeline by Environment - Example 
 
-1. We created a Gitlab Group called **pulumi**
-2. We created three Gitlab projects called **sample-iam**, **sample-eks** and **sample-k8sapp**
+1. We created a GitLab Group called **pulumi**
+2. We created three GitLab projects called **sample-iam**, **sample-eks** and **sample-k8sapp**
 3. We have two pipelines: **environment:dev** and **environment:prod**
     1. In the two pipelines, we have a total of six pulumi stacks: 
         1. **pulumi/sample-iam/dev** and **pulumi/sample-iam/prod**
@@ -61,7 +61,7 @@ Let's now work through our example with GitLab Pipelines.
     1. The first is `PULUMI_ACCESS_TOKEN`, which is required to authenticate with **pulumi.com** in order to perform the preview or update. You can create a new Pulumi access token specifically for your CI/CD job on your [Pulumi Account page](https://app.pulumi.com/account/tokens?__hstc=228626179.56681581cf02b2e77b51bd3037fb698a.1554407757799.1557357031878.1557359155284.54&__hssc=228626179.2.1557359155284&__hsfp=3057520729).
     2. Next, you will also need to set environment variables specific to your cloud resource provider. For example, if your stack is managing resources on AWS, `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
 
-## Create Pulumi stacks and push the files to your Gitlab project
+## Create Pulumi stacks and push the files to your GitLab project
 
 If you run `pulumi` from any branch other than the `master` branch, you will hit an error that the `PULUMI_ACCESS_TOKEN` environment variable cannot be accessed. You can fix this by specifying a wildcard regex to allow specific branches to be able to access the secret environment variables. Please refer to the [GitLab documentation](https://gitlab.com/help/user/project/protected_branches.md) to understand this better.
 
@@ -362,4 +362,4 @@ Despite being powerful, conceptually this setup is quite simple and doesn't requ
 
 Upon a successful update, each tier's pipeline will trigger a pipeline for the tiers that depend on it. Pulumi's StackReference feature ensures that the dependent tiers receive new copies of the outputs exported from the IAM stack, so the deployment flows naturally through the pipeline!
 
-This brings us to the end of our CD solution with Pulumi and Gitlab on Amazon EKS. For more examples, refer to our open source repository [here](https://github.com/pulumi/examples). Refer to my previous blog on Amazon EKS and k8s RBAC [here](https://blog.pulumi.com/simplify-kubernetes-rbac-in-amazon-eks-with-open-source-pulumi-packages).
+This brings us to the end of our CD solution with Pulumi and GitLab on Amazon EKS. For more examples, refer to our open source repository [here](https://github.com/pulumi/examples). Refer to my previous blog on Amazon EKS and k8s RBAC [here](https://blog.pulumi.com/simplify-kubernetes-rbac-in-amazon-eks-with-open-source-pulumi-packages).
