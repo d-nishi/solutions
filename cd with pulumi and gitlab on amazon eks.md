@@ -8,7 +8,8 @@ In this blog, we will work through an example that shows how to use Pulumi to en
 
 ## Prerequisites
 
-* An account on [https://app.pulumi.com](https://app.pulumi.com/) with an organization. * The latest `pulumi` CLI. Installation instructions are [here](https://pulumi.io/quickstart/install.html).
+* An account on [https://app.pulumi.com](https://app.pulumi.com/) with an organization. 
+* The latest `pulumi` CLI. Installation instructions are [here](https://pulumi.io/quickstart/install.html).
 * A bare repository. Set the remote URL to be your GitLab project.
 
 ## Concepts in Pulumi
@@ -40,7 +41,7 @@ Please read more about [how to manage stack tags here](https://pulumi.io/referen
 
 ![alt text](https://github.com/d-nishi/solutions/blob/master/microstack-environment.png)
 
-Let's now work through our example with GitLab Pipelines. Note: Please replace the highlighted <org-name-in-pulumi> below with your organization name to run through the steps successfully.
+Let's now work through our example with GitLab Pipelines. Note: Please replace the highlighted <span style="color:red">some **This is Red Bold.** <org-name-in-pulumi></span> below with your organization name to run through the steps successfully.
 
 ## GitLab Pipeline by Environment: 
 
