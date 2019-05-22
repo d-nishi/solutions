@@ -219,7 +219,7 @@ $ pulumi stack tag set environment prod
 $ pulumi up
 ```
 
-**Step 3:** Create the pulumi stack "sample-eks" and set stack tag "key:value" = "environment:dev". 
+**Step 3:** Create the pulumi stack "sample-k8sapp" and set stack tag "key:value" = "environment:dev". 
 We will then update the `index.ts` file with the relevant code block as shown below:
 
 ```
