@@ -1,4 +1,5 @@
 ![alt text](https://github.com/d-nishi/solutions/blob/master/feaured-image-jupyter.png)
+
 # Create secure Jupyter Notebooks on Kubernetes using Pulumi
 
 In this post, we will work through an example that shows how to use Pulumi to create Jupyter Notebooks on Kubernetes. Having worked on Kubernetes since 2015, a couple of critical benefits jump out that may resonate with you as well:
