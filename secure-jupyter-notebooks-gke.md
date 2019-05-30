@@ -1,4 +1,4 @@
-![alt text](https://github.com/d-nishi/solutions/blob/master/featured-image-jupyter.png)
+![alt text](https://github.com/d-nishi/solutions/blob/master/feaured-image-jupyter.png)
 
 # Create secure Jupyter Notebooks on Kubernetes using Pulumi
 
@@ -45,7 +45,7 @@ import { readFileSync, fstat } from "fs";
 const name = "jupyter-notebook";
 
 /*
- * STEP 1: Create a GKE Cluster
+ * STEP 2: Create a GKE Cluster
  */
 const cluster = new gcp.container.Cluster(name, {
     initialNodeCount: 2,
@@ -104,13 +104,13 @@ const clusterProvider = new k8s.Provider(name, { kubeconfig: kubeconfig });
 
 ### Step 3: CREATE A NGINX-INGRESS-CONTROLLER to GENERATE INGRESSES
 
-You can use the default L7 load balancer in GCP but here we add an Nginx-Ingress-Controller to the cluster. With Pulumi, you write four lines of typescript to reuse the stable nginx ingress controller helm chart and have the controller, default backends, RBAC, Service account, Config map all running within seconds. 
+You can use the default L7 load balancer in GCP but here we add an NGINX-Ingress-Controller to the cluster. With Pulumi, you write four lines of typescript to reuse the stable NGINX ingress controller helm chart and have the controller, default backends, RBAC, Service account, Config map all running within seconds. 
 
 Add the following lines of code in `index.ts` file and run `pulumi update`
 
 ```
 /*
- * STEP 2: Create Nginx Ingress Controller in GKE
+ * STEP 3: Create NGINX Ingress Controller in GKE
  */
 
 const nginxingresscntlr = new k8s.helm.v2.Chart("nginxingresscontroller", {
@@ -128,7 +128,7 @@ Bringing up Jupyter notebook deployment and service requires adding the followin
 
 ```
 /*
- * STEP 3: Create Jupyter notebook deployment and service in the GKE cluster
+ * STEP 4: Create Jupyter notebook deployment and service in the GKE cluster
  */
 
 const appName = "jupyter-notebook";
@@ -172,21 +172,20 @@ const jupyterService = new k8s.core.v1.Service(appName, {
 
 We first create a local `auth.txt` file with the password using the following command: `htpasswd -c auth jupyter`
 
-We then read this file synchronously, convert it to base64 and add it as a secret in the GKE cluster. We use this secret as the tls password to access the jupyter notebook ingress endpoint accessible from the domain name defined in the host section of the ingress declaration. The annotations in the ingress declarations are required to enable this behavior on the ingress object.
+We then read this file synchronously, convert it to base64 and add it as a secret in the GKE cluster. We use this secret as the TLS password to access the Jupyter notebook ingress endpoint accessible from the domain name defined in the host section of the ingress declaration. The annotations in the ingress declarations are required to enable this behavior on the ingress object.
 
 ```
 /*
- * STEP 4: Create a secret to enable "basic-auth" for your Jupyter notebook ingress and add it to the ingress declaration in the GKE cluster
+ * STEP 5: Create a secret to enable "basic-auth" for your Jupyter notebook ingress and add it to the ingress declaration in the GKE cluster
  */
 
-const authContents = (readFileSync("/Users/nishidavidson/gke-hello-world/auth.txt")).toString()
+const authContents = (readFileSync("<path-to-auth-file>")).toString()
 
 function toBase64(s: string): string {
     return Buffer.from(s).toString("base64");
 }
 
 const authContents_base64 = toBase64(authContents);
-console.log(authContents_base64)
 
 const jupyternotebooksecret = new k8s.core.v1.Secret("jupyter-notebook-tls", {
     metadata: { name: "basic-auth", namespace: "default" },
@@ -231,7 +230,7 @@ Upon completion, you will see the GKE cluster components show up as follows:
 
 ![alt text](https://github.com/d-nishi/solutions/blob/master/gke-jupyter.png)
 
-Open a browser to access the jupyter-notebook service @ nishidavidson.com (http://nishidavidson.com/) you will be asked for the “username: jupyter” and “password” for the secret you created in auth.text file.
+Open a browser to access the jupyter-notebook service @ the domain name you used for the host definition in your ingress declaration. In our example here, I used the domain name [nishidavidson.com](http://nishidavidson.com/). When you open your DNS, you will be asked for the “username: jupyter” and “password” for the secret you created in `auth.text` file as shown below:
 
 ![alt text](https://github.com/d-nishi/solutions/blob/master/jupyter-notebook-login.png)
 
@@ -239,6 +238,6 @@ As soon as the password is accepted, You should now be able to go to your websit
 
 ![alt text](https://github.com/d-nishi/solutions/blob/master/jupyter-notebook-access.png)
 
-This brings us to the end of our solution. We worked through a simple example of creating a GKE cluster, an nginx ingress controller and stood up our password protected Jupyter notebook Ingress, service and deployment with a simple secret.
+This brings us to the end of our solution. We worked through a simple example of creating a GKE cluster, an NGINX ingress controller and stood up our password protected Jupyter notebook Ingress, Service and Deployment with a simple secret.
 
-For more solutions on Kubernetes, visit https://blog.pulumi.com/ and get started today with more examples from in out github repository here (https://github.com/pulumi/examples).
+For more solutions on Kubernetes, visit our [blog site](https://blog.pulumi.com/) and get started today with more examples from in our GitHub repository [here](https://github.com/pulumi/examples).
