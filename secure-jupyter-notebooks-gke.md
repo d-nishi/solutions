@@ -1,4 +1,4 @@
-![alt text](https://github.com/d-nishi/solutions/blob/master/feaured-image-jupyter.png)
+![alt text](https://github.com/d-nishi/solutions/blob/master/featured-image-jupyter.png)
 
 # Create secure Jupyter Notebooks on Kubernetes using Pulumi
 
