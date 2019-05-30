@@ -19,17 +19,19 @@ In this post, we will work through an example that shows how to use Pulumi to cr
 * We will work this example on a GKE cluster so lets first configure GCP Auth:
 
 ```
-`  **$** gcloud auth login
-  **$ **gcloud config set project <YOUR_GCP_PROJECT_HERE>
-  **$ **gcloud auth application-default login`
+  **$** gcloud auth login
+  **$** gcloud config set project <YOUR_GCP_PROJECT_HERE>
+  **$** gcloud auth application-default login
+
 ```
 
 ### Step 1: CREATE a  PULUMI PROJECT and STACK WITH A PULUMI TYPESCRIPT TEMPLATE 
 
 ```
-`  **$** mkdir gke-jupyter-notebook && cd `gke-jupyter-notebook
-  `**$ **pulumi new typescript
-  `**$ **npm install --save @pulumi/kubernetes `@pulumi/gcp```
+  **$** mkdir gke-jupyter-notebook && cd `gke-jupyter-notebook
+  **$** pulumi new typescript
+  **$** npm install --save @pulumi/kubernetes `@pulumi/gcp
+  
 ```
 
 ### Step 2: CREATE a  GKE CLUSTER
@@ -170,7 +172,7 @@ const jupyterService = new k8s.core.v1.Service(appName, {
 
 ### STEP 5: CREATE A SECRET THAT IS USED WITH YOUR JUPYTER NOTEBOOK DOMAIN NAME
 
-We first create a local `auth.txt` file with the password using the following command: `htpasswd -c auth jupyter`
+We first create a local `auth.txt` file with the password using the following command: `htpasswd -c auth.txt jupyter`
 
 We then read this file synchronously, convert it to base64 and add it as a secret in the GKE cluster. We use this secret as the TLS password to access the Jupyter notebook ingress endpoint accessible from the domain name defined in the host section of the ingress declaration. The annotations in the ingress declarations are required to enable this behavior on the ingress object.
 
@@ -179,7 +181,7 @@ We then read this file synchronously, convert it to base64 and add it as a secre
  * STEP 5: Create a secret to enable "basic-auth" for your Jupyter notebook ingress and add it to the ingress declaration in the GKE cluster
  */
 
-const authContents = (readFileSync("<path-to-auth-file>")).toString()
+const authContents = (readFileSync("<path-to-auth.txt-file>")).toString()
 
 function toBase64(s: string): string {
     return Buffer.from(s).toString("base64");
@@ -230,7 +232,7 @@ Upon completion, you will see the GKE cluster components show up as follows:
 
 ![alt text](https://github.com/d-nishi/solutions/blob/master/gke-jupyter.png)
 
-Open a browser to access the jupyter-notebook service @ the domain name you used for the host definition in your ingress declaration. In our example here, I used the domain name [nishidavidson.com](http://nishidavidson.com/). When you open your DNS, you will be asked for the “username: jupyter” and “password” for the secret you created in `auth.text` file as shown below:
+Open a browser to access the jupyter-notebook Service using the domain name declared in the host section of your ingress code above. In our example, I used the domain name [nishidavidson.com](http://nishidavidson.com/). When you open your DNS, you will be asked for the “username: jupyter” and “password” for the secret you created in `auth.txt` file as shown below:
 
 ![alt text](https://github.com/d-nishi/solutions/blob/master/jupyter-notebook-login.png)
 
