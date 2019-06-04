@@ -38,7 +38,7 @@ In this post, we will work through an example that shows how to use Pulumi to cr
 
 To create a GKE cluster, simply update the following code in `index.ts` file and run `pulumi up`
 
-```
+```typescript
 import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
 import * as gcp from "@pulumi/gcp";
@@ -110,7 +110,7 @@ You can use the default L7 load balancer in GCP but here we add an NGINX-Ingress
 
 Add the following lines of code in `index.ts` file and run `pulumi update`
 
-```
+```typescript
 /*
  * STEP 3: Create NGINX Ingress Controller in GKE
  */
@@ -128,7 +128,7 @@ const nginxingresscntlr = new k8s.helm.v2.Chart("nginxingresscontroller", {
 
 Bringing up Jupyter notebook deployment and service requires adding the following lines of code in `index.ts` file and running `pulumi update`
 
-```
+```typescript
 /*
  * STEP 4: Create Jupyter notebook deployment and service in the GKE cluster
  */
@@ -176,7 +176,7 @@ We first create a local `auth.txt` file with the password using the following co
 
 We then read this file synchronously, convert it to base64 and add it as a secret in the GKE cluster. We use this secret as the TLS password to access the Jupyter notebook ingress endpoint accessible from the domain name defined in the host section of the ingress declaration. The annotations in the ingress declarations are required to enable this behavior on the ingress object.
 
-```
+```typescript
 /*
  * STEP 5: Create a secret to enable "basic-auth" for your Jupyter notebook ingress and add it to the ingress declaration in the GKE cluster
  */
