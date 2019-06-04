@@ -28,7 +28,7 @@ In this post, we will work through an example that shows how to use Pulumi to cr
 ### Step 1: Create a  Pulumi Project and Stack with a Pulumi typescript template 
 
 ```
-  $ mkdir gke-jupyter-notebook && cd `gke-jupyter-notebook
+  $ mkdir gke-jupyter-notebook && cd gke-jupyter-notebook
   $ pulumi new typescript
   $ npm install --save @pulumi/kubernetes `@pulumi/gcp
   
