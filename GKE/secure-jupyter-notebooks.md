@@ -30,7 +30,7 @@ In this post, we will work through an example that shows how to use Pulumi to cr
 ```
   $ mkdir gke-jupyter-notebook && cd gke-jupyter-notebook
   $ pulumi new typescript
-  $ npm install --save @pulumi/kubernetes `@pulumi/gcp
+  $ npm install --save @pulumi/kubernetes @pulumi/gcp
   
 ```
 
