@@ -1,4 +1,4 @@
-![alt text](https://github.com/d-nishi/solutions/blob/master/featured-image-gitlab.png)
+![alt text](https://github.com/d-nishi/solutions/blob/master/images/featured-image-gitlab.png)
 # Continuous Delivery with GitLab and Pulumi on Amazon EKS
 
 Authors: [Nishi Davidson](https://github.com/d-nishi) and [Sean Gillespie](https://github.com/swgillespie)
@@ -20,11 +20,11 @@ All users in the Pulumi service will start with the hierarchy of an organization
 
 * **Monolithic project/stack structure:** A single project defines the infrastructure and application resources for an entire vertical service as represented in the image below:
 
-![alt text](https://github.com/d-nishi/solutions/blob/master/monolith.png)
+![alt text](https://github.com/d-nishi/solutions/blob/master/images/monolith.png)
 
 * **Micro-stacks project/stack structure:** A project broken into separately managed smaller projects, often across different dimensions as represented in the image below:
 
-![alt text](https://github.com/d-nishi/solutions/blob/master/microstack.png)
+![alt text](https://github.com/d-nishi/solutions/blob/master/images/microstack.png)
 
 Working with Inter-Stack Dependencies with the latter option is more suited in a production setup giving users more flexibility and boundaries between their teams. We will use this structure in our example below. For more information on Pulumi projects and stacks, please refer to our documentation [here](https://pulumi.io/reference/organizing-stacks-projects.html).
 
@@ -38,7 +38,7 @@ Working with Inter-Stack Dependencies with the latter option is more suited in a
     
 Please read more about [how to manage stack tags here](https://pulumi.io/reference/stack.html#stack-tags).
 
-![alt text](https://github.com/d-nishi/solutions/blob/master/microstack-environment.png)
+![alt text](https://github.com/d-nishi/solutions/blob/master/images/microstack-environment.png)
 
 Let's now work through our example with GitLab Pipelines. Note: Please replace the highlighted ***org-name-in-pulumi*** below with your organization name to run through the steps successfully.
 
@@ -55,7 +55,7 @@ Let's now work through our example with GitLab Pipelines. Note: Please replace t
 
 Similarly, ***org-name-in-pulumi***/sample-eks/dev will trigger the downstream stack ***org-name-in-pulumi***/sample-k8sapp/dev provided the cycle of **pulumi preview → pulumi deploy** completes without any failure.
 
-![alt text](https://github.com/d-nishi/solutions/blob/master/microstack-environment-gitlab.png)
+![alt text](https://github.com/d-nishi/solutions/blob/master/images/microstack-environment-gitlab.png)
 
 4. To use Pulumi within GitLab CI, there are a few environment variables you’ll need to set for each build.
    * The first is `PULUMI_ACCESS_TOKEN`, which is required to authenticate with **pulumi.com** in order to perform the preview or update. You can create a new Pulumi access token specifically for your CI/CD job on your [Pulumi Account page](https://app.pulumi.com/account/tokens).
@@ -348,7 +348,7 @@ This file describes a three-stage pipeline for the `sample-iam` project:
 
 Despite being powerful, conceptually this setup is quite simple and doesn't require much code to get right.
 
-![alt text](https://github.com/d-nishi/solutions/blob/master/pipeline-image.png)
+![alt text](https://github.com/d-nishi/solutions/blob/master/images/pipeline-image.png)
 
 Upon a successful update, each tier's pipeline will trigger a pipeline for the tiers that depend on it. Pulumi's StackReference feature ensures that the dependent tiers receive new copies of the outputs exported from the IAM stack, so the deployment flows naturally through the pipeline!
 
