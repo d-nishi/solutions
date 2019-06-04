@@ -25,7 +25,7 @@ In this post, we will work through an example that shows how to use Pulumi to cr
 
 ```
 
-### Step 1: CREATE a  PULUMI PROJECT and STACK WITH A PULUMI TYPESCRIPT TEMPLATE 
+### Step 1: Create a  Pulumi Project and Stack with a Pulumi typescript template 
 
 ```
   $ mkdir gke-jupyter-notebook && cd `gke-jupyter-notebook
@@ -34,7 +34,7 @@ In this post, we will work through an example that shows how to use Pulumi to cr
   
 ```
 
-### Step 2: CREATE a  GKE CLUSTER
+### Step 2: Create a GKE cluster
 
 To create a GKE cluster, simply update the following code in `index.ts` file and run `pulumi up`
 
@@ -104,7 +104,7 @@ const clusterProvider = new k8s.Provider(name, { kubeconfig: kubeconfig });
 
 ```
 
-### Step 3: CREATE A NGINX-INGRESS-CONTROLLER to GENERATE INGRESSES
+### Step 3: Create an NGINX-Ingress-Controller to generate ingresses
 
 You can use the default L7 load balancer in GCP but here we add an NGINX-Ingress-Controller to the cluster. With Pulumi, you write four lines of typescript to reuse the stable NGINX ingress controller helm chart and have the controller, default backends, RBAC, Service account, Config map all running within seconds. 
 
@@ -124,7 +124,7 @@ const nginxingresscntlr = new k8s.helm.v2.Chart("nginxingresscontroller", {
 
 ```
 
-### Step 4: CREATE A JUPYTER NOTEBOOK deployment and service WITH TYPE NODEPORT
+### Step 4: Create a Jupyter Notebook deployment and service with type Nodeport
 
 Bringing up Jupyter notebook deployment and service requires adding the following lines of code in `index.ts` file and running `pulumi update`
 
@@ -170,7 +170,7 @@ const jupyterService = new k8s.core.v1.Service(appName, {
 
 ```
 
-### STEP 5: CREATE A SECRET THAT IS USED WITH YOUR JUPYTER NOTEBOOK DOMAIN NAME
+### STEP 5: Create a secret to be used with Jupyter Notebook DNS
 
 We first create a local `auth.txt` file with the password using the following command: `htpasswd -c auth.txt jupyter`
 
