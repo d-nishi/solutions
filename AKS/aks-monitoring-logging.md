@@ -1,4 +1,3 @@
-
 ![alt text](https://github.com/d-nishi/solutions/blob/master/images/feaured-image.png)
 
 # Create AKS Clusters with monitoring and logging with Pulumi-Azure open source SDKs
