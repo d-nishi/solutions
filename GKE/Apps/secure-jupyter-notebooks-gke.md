@@ -19,18 +19,18 @@ In this post, we will work through an example that shows how to use Pulumi to cr
 * We will work this example on a GKE cluster so lets first configure GCP Auth:
 
 ```
-  **$** gcloud auth login
-  **$** gcloud config set project <YOUR_GCP_PROJECT_HERE>
-  **$** gcloud auth application-default login
+  $ gcloud auth login
+  $ gcloud config set project <YOUR_GCP_PROJECT_HERE>
+  $ gcloud auth application-default login
 
 ```
 
 ### Step 1: CREATE a  PULUMI PROJECT and STACK WITH A PULUMI TYPESCRIPT TEMPLATE 
 
 ```
-  **$** mkdir gke-jupyter-notebook && cd `gke-jupyter-notebook
-  **$** pulumi new typescript
-  **$** npm install --save @pulumi/kubernetes `@pulumi/gcp
+  $ mkdir gke-jupyter-notebook && cd `gke-jupyter-notebook
+  $ pulumi new typescript
+  $ npm install --save @pulumi/kubernetes `@pulumi/gcp
   
 ```
 
