@@ -78,7 +78,8 @@ $ cat Role-Trust-Policy.json
 
 You update the default `index.ts` file in your source code editor such as VSCode as follows:
 
-```
+```typescript
+
 import * as aws from "@pulumi/aws";
 import * as awsx from "@pulumi/awsx";
 import * as eks from "@pulumi/eks";
@@ -150,7 +151,7 @@ metadata:
 
 You use our API docs and your source-code editor to autocomplete the default `index.ts` file.
 
-```
+```typescript
 /*
  * 2) Single step deployment of EKS cluster with the most important variables and a Simple Function to create namespaces   
  * automation and prod
@@ -315,7 +316,7 @@ rolebinding.rbac.authorization.k8s.io/env-prod-binding created
 
 Update your `index.ts` file with more code as follows:
 
-```
+```typescript
 /*
  * 3) Single Step deployment of k8s RBAC configuration for user1, user2 and user3 per our example
  */
