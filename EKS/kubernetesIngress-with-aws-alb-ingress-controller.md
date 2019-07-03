@@ -1,4 +1,4 @@
-![alt text](https://github.com/d-nishi/solutions/blob/master/images/featured-img-albingressctrl.png)
+![alt text](https://github.com/d-nishi/solutions/blob/master/images/featured-img-albingresscontroller.png)
 
 [Kubernetes Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) is an api object that allows you manage external (or) internal HTTP[s] access to [Kubernetes services](https://kubernetes.io/docs/concepts/services-networking/service/) running in a cluster. [Amazon Elastic Load Balancing Application Load Balancer](https://aws.amazon.com/elasticloadbalancing/features/#Details_for_Elastic_Load_Balancing_Products) (ALB) is a popular AWS service that load balances incoming traffic at the application layer across multiple targets, such as Amazon EC2 instances, in a region. ALB supports multiple features including host or path based routing, TLS (Transport layer security) termination, WebSockets, HTTP/2, AWS WAF (web application firewall) integration, integrated access logs, and health checks.
 
