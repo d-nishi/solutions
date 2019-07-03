@@ -1,4 +1,4 @@
-![alt text](https://github.com/d-nishi/solutions/blob/master/images/featured-image-gitlab.png)
+![alt text](efs-csi-drive-amazon-eks-pulumi-featuredimg.png)
 # Using EFS CSI Driver on Amazon EKS with Pulumi Crosswalk for AWS
 
 The Amazon Elastic File System Container Storage Interface (CSI) Driver implements the [CSI specification](https://github.com/container-storage-interface/spec/blob/master/spec.md) for container orchestrators to manage the lifecycle of Amazon EFS filesystems.
@@ -357,3 +357,5 @@ export const newPod = new k8s.core.v1.Pod("efs-app", {
 
 Verify the pod is running and that data is being written into the EFS filesystem using:
 `kubectl exec -ti efs-app -- tail -f /data/out.txt`
+
+This brings us to the end of our solution with Pulumi and AWS EFS on Amazon EKS. For more examples, refer to Pulumi's open source repository [here](https://github.com/pulumi/examples). Refer to my other blogs on Kubernetes [here](https://blog.pulumi.com/author/nishi-davidson).
