@@ -213,10 +213,10 @@ const albingresscntlr = new k8s.helm.v2.Chart("alb", {
 Confirm the alb-ingress-controller was created as follows:
 
 ```bash
-$ kubectl get pods -n default | egrep -o alb-ingress[a-zA-Z0-9-]+
-alb-ingress-controller-58f44d4bb8lxs6w
+$ kubectl get pods -n default | grep alb
+alb-aws-alb-ingress-controller-58f44d4bb8lxs6w
 
-$ kubectl logs alb-ingress-controller-58f44d4bb8lxs6w
+$ kubectl logs alb-aws-alb-ingress-controller-58f44d4bb8lxs6w
 -------------------------------------------------------------------------------
 AWS ALB Ingress controller
   Release:    v1.1.2
