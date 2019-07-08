@@ -1,8 +1,8 @@
 ---
-title: "Kubernetes Ingress with AWS ALB Ingress Controller and Pulumi Crosswalk for AWS"
+title: "bernetes Ingress with AWS ALB Ingress Controller and Pulumi Crosswalk for AWS"
 authors: ["nishi-davidson"]
 tags: ["AWS", "EKS", "Kubernetes"]
-date: "2019-07-08"
+date: "2019-05-06"
 
 meta_image: "https://github.com/d-nishi/solutions/blob/master/images/featured-img-albingresscontroller.png"
 ---
@@ -13,12 +13,13 @@ The [AWS ALB Ingress controller](https://github.com/kubernetes-sigs/aws-alb-ingr
 
 In this blog, we will work through a simple example of running ALB based Kubernetes Ingresses with Pulumi EKS, AWS, and AWSX packages.
 
-# Prerequisites to work with Pulumi:
-[Install pulumi CLI](https://pulumi.io/quickstart/install.html?__hstc=194006706.92c420b2463a950f50b989da5e9a9de1.1559843842775.1560878104539.1560906741042.31&__hssc=194006706.2.1560906741042&__hsfp=3773980820) and set up your [AWS credentials](https://pulumi.io/quickstart/aws/setup.html?__hstc=194006706.92c420b2463a950f50b989da5e9a9de1.1559843842775.1560878104539.1560906741042.31&__hssc=194006706.2.1560906741042&__hsfp=3773980820). Initialize a new [Pulumi project](https://pulumi.io/reference/project.html?__hstc=194006706.92c420b2463a950f50b989da5e9a9de1.1559843842775.1560878104539.1560906741042.31&__hssc=194006706.2.1560906741042&__hsfp=3773980820) from available templates. We use aws-typescript template here to install all dependencies and save the configuration.
+## Step 1: Initialize Pulumi project and stack in your organization:
+[Install pulumi CLI](https://pulumi.io/quickstart/install.html?__hstc=194006706.92c420b2463a950f50b989da5e9a9de1.1559843842775.1560878104539.1560906741042.31&__hssc=194006706.2.1560906741042&__hsfp=3773980820) and set up your [AWS credentials](https://pulumi.io/quickstart/aws/setup.html?__hstc=194006706.92c420b2463a950f50b989da5e9a9de1.1559843842775.1560878104539.1560906741042.31&__hssc=194006706.2.1560906741042&__hsfp=3773980820). Initialize a new [Pulumi project](https://pulumi.io/reference/project.html?__hstc=194006706.92c420b2463a950f50b989da5e9a9de1.1559843842775.1560878104539.1560906741042.31&__hssc=194006706.2.1560906741042&__hsfp=3773980820) from available templates. We use `aws-typescript` template here to install all library dependencies.
 
 ```bash
 $ brew install pulumi # download pulumi CLI
 $ mkdir eks-alb-ingress && cd eks-alb-ingress
+$ npm install --save @pulumi/kubernetes @pulumi/eks
 $ pulumi new aws-typescript
 $ ls -la
 drwxr-xr-x   10 nishidavidson  staff    320 Jun 18 18:22 .
@@ -33,29 +34,27 @@ drwxr-xr-x   95 nishidavidson  staff   3040 Jun 18 18:22 node_modules
 -rw-------    1 nishidavidson  staff    522 Jun 18 18:22 tsconfig.json
 ```
 
-## STEP 1: Create an EKS cluster and declare ALB Ingress Controller Helm Chart
+## STEP 2: Create an EKS cluster
 
-Update `index.ts` file as follows and run `pulumi up`:
+Once the steps above are complete, we update the typescript code in index.ts file to create an EKS cluster and run pulumi up from the command line:
 
 ```typescript
-import * as awsx from "@pulumi/awsx";
-import * as eks from "@pulumi/eks";
-import * as k8s from "@pulumi/kubernetes";
+//* STEP 2: Create an EKS Cluster
 
-const vpc = new awsx.ec2.Vpc("vpc", { subnets: [{ type: "public" }] });
+const vpc = new awsx.Network("vpc-alb-ingress-eks", { usePrivateSubnets: false });
 const cluster = new eks.Cluster("eks-cluster", {
- vpcId             : vpc.id,
- subnetIds         : vpc.publicSubnetIds,
- instanceType      : "t2.medium",
- version           : "1.12",
- nodeRootVolumeSize: 200,
- desiredCapacity   : 3,
- maxSize           : 4,
- minSize           : 3,
- deployDashboard   : false,
- vpcCniOptions     : {
-   warmIpTarget    : 4,
- },
+  vpcId             : vpc.vpcId,
+  subnetIds         : vpc.publicSubnetIds,
+  instanceType      : "t2.medium",
+  version           : "1.12",
+  nodeRootVolumeSize: 200,
+  desiredCapacity   : 3,
+  maxSize           : 4,
+  minSize           : 3,
+  deployDashboard   : false,
+  vpcCniOptions     : {
+    warmIpTarget    : 4,
+  },
 });
 
 export const clusterName = cluster.eksCluster.name;
@@ -63,22 +62,151 @@ export const clusterNodeInstanceRoleName = cluster.instanceRoles.apply(roles => 
 export const kubeconfig = cluster.kubeconfig;
 export const nodesubnetId = cluster.core.subnetIds;
 ```
+Configure the Public subnets in the console as defined in this [guide](https://kubernetes-sigs.github.io/aws-alb-ingress-controller/guide/controller/config/#subnet-auto-discovery). 
 
-## STEP 2: Deploy ALB Ingress Controller
+## STEP 3: Deploy ALB Ingress Controller
 
-Update `index.ts` file from Step 1 and run `pulumi up`:
+Lets confirm that the EKS cluster is up using the following commands:
+
+```bash
+$ pulumi stack export kubeconfig > kubeconfig.yaml $ export KUBECONFIG=kubeconfig.yaml $ kubectl get nodes
+NAME STATUS ROLES AGE VERSION
+ip-10-10-0-58.ec2.internal Ready <none> 7h8m v1.12.7
+ip-10-10-1-167.ec2.internal Ready <none> 7h8m v1.12.7
+ip-10-10-1-84.ec2.internal Ready <none> 7h8m v1.12.7
+```
+
+Adequate roles and policies must be configured in AWS and available to the node(s) running the controller. How access is granted is up to you. Some will attach the needed rights to node's role in AWS. Others will use projects like [kube2iam](https://github.com/jtblin/kube2iam). We attach a minimal IAM policy to the EKS worker nodes and then declare this on the EKS cluster as shown in the code below.
+
+When declaring the ALB Ingress controller we simply re-use the Helm chart as part of the code. There is no need to rewrite all the logic or install Tiller in the EKS cluster. This frees you from thinking about RBAC for Helm, Tiller and the k8s cluster per se’.
+
+With the default “instance mode” Ingress traffic starts from the ALB and reaches the [NodePort](https://kubernetes.io/docs/concepts/services-networking/service/#nodeport) opened for the service. Traffic is then routed to the container Pods within cluster. This is all encoded using Pulumi libraries below. If you wish to use "ip-mode" with your Ingress such that traffic directly reaches your pods, you will need to modify the `alb.ingress.kubernetes.io/target-type` annotation when using the helm chart.
+
+Append `index.ts` file from Step 2 with the code below and run pulumi up:
 
 ```typescript
-//* STEP 2: Declare ALB Ingress Controller from a Helm Chart
-const albingresscntlr = new k8s.helm.v2.Chart("albingresscontroller", {
-   chart: "http://storage.googleapis.com/kubernetes-charts-incubator/aws-alb-ingress-controller-0.1.9.tgz",
-   values: {
-       clusterName: "clusterName",
-       autoDiscoverAwsRegion: "true",
-       autoDiscoverAwsVpcID: "true",
-       name: "alb-ingress-cntroller-0.1.9",
-       namespace: "kube-system",
-   },
+//* STEP 3: Declare the AWS ALB Ingress Controller
+
+//Create IAM Policy for the IngressController called "ingressController-iam-policy” and read the policy ARN
+const ingressControllerPolicy = new aws.iam.Policy("ingressController-iam-policy", {
+    policy: {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Action": [
+              "acm:DescribeCertificate",
+              "acm:ListCertificates",
+              "acm:GetCertificate"
+            ],
+            "Resource": "*"
+          },
+          {
+            "Effect": "Allow",
+            "Action": [
+              "ec2:AuthorizeSecurityGroupIngress",
+              "ec2:CreateSecurityGroup",
+              "ec2:CreateTags",
+              "ec2:DeleteTags",
+              "ec2:DeleteSecurityGroup",
+              "ec2:DescribeInstances",
+              "ec2:DescribeInstanceStatus",
+              "ec2:DescribeSecurityGroups",
+              "ec2:DescribeSubnets",
+              "ec2:DescribeTags",
+              "ec2:DescribeVpcs",
+              "ec2:ModifyInstanceAttribute",
+              "ec2:ModifyNetworkInterfaceAttribute",
+              "ec2:RevokeSecurityGroupIngress"
+            ],
+            "Resource": "*"
+          },
+          {
+            "Effect": "Allow",
+            "Action": [
+              "elasticloadbalancing:AddTags",
+              "elasticloadbalancing:CreateListener",
+              "elasticloadbalancing:CreateLoadBalancer",
+              "elasticloadbalancing:CreateRule",
+              "elasticloadbalancing:CreateTargetGroup",
+              "elasticloadbalancing:DeleteListener",
+              "elasticloadbalancing:DeleteLoadBalancer",
+              "elasticloadbalancing:DeleteRule",
+              "elasticloadbalancing:DeleteTargetGroup",
+              "elasticloadbalancing:DeregisterTargets",
+              "elasticloadbalancing:DescribeListeners",
+              "elasticloadbalancing:DescribeLoadBalancers",
+              "elasticloadbalancing:DescribeLoadBalancerAttributes",
+              "elasticloadbalancing:DescribeRules",
+              "elasticloadbalancing:DescribeSSLPolicies",
+              "elasticloadbalancing:DescribeTags",
+              "elasticloadbalancing:DescribeTargetGroups",
+              "elasticloadbalancing:DescribeTargetGroupAttributes",
+              "elasticloadbalancing:DescribeTargetHealth",
+              "elasticloadbalancing:ModifyListener",
+              "elasticloadbalancing:ModifyLoadBalancerAttributes",
+              "elasticloadbalancing:ModifyRule",
+              "elasticloadbalancing:ModifyTargetGroup",
+              "elasticloadbalancing:ModifyTargetGroupAttributes",
+              "elasticloadbalancing:RegisterTargets",
+              "elasticloadbalancing:RemoveTags",
+              "elasticloadbalancing:SetIpAddressType",
+              "elasticloadbalancing:SetSecurityGroups",
+              "elasticloadbalancing:SetSubnets",
+              "elasticloadbalancing:SetWebACL"
+            ],
+            "Resource": "*"
+          },
+          {
+            "Effect": "Allow",
+            "Action": [
+              "iam:GetServerCertificate",
+              "iam:ListServerCertificates"
+            ],
+            "Resource": "*"
+          },
+          {
+            "Effect": "Allow",
+            "Action": [
+              "waf-regional:GetWebACLForResource",
+              "waf-regional:GetWebACL",
+              "waf-regional:AssociateWebACL",
+              "waf-regional:DisassociateWebACL"
+            ],
+            "Resource": "*"
+          },
+          {
+            "Effect": "Allow",
+            "Action": [
+              "tag:GetResources",
+              "tag:TagResources"
+            ],
+            "Resource": "*"
+          },
+          {
+            "Effect": "Allow",
+            "Action": [
+              "waf:GetWebACL"
+            ],
+            "Resource": "*"
+          }
+        ]}
+}); 
+
+//Attach this policy to the NodeInstanceRole of the worker nodes
+export const nodeinstanceRole = new aws.iam.RolePolicyAttachment("eks-NodeInstanceRole-policy-attach", {
+    policyArn: ingressControllerPolicy.arn,
+    role: clusterNodeInstanceRoleName,
+});
+
+//Declare the ALBIngressController in 1 step with the Helm Chart
+const albingresscntlr = new k8s.helm.v2.Chart("alb", {
+    chart: "http://storage.googleapis.com/kubernetes-charts-incubator/aws-alb-ingress-controller-0.1.9.tgz",
+    values: {
+        clusterName: clusterName,
+        autoDiscoverAwsRegion: "true",
+        autoDiscoverAwsVpcID: "true",
+    },
 }, { provider: cluster.provider });
 ```
 
@@ -97,63 +225,65 @@ AWS ALB Ingress controller
 -------------------------------------------------------------------------------
 ```
 
-## STEP 3: Deploy Sample Application
+## STEP 4: Deploy Sample Application
 
-Update `index.ts` file from Step 1 and run `pulumi up`:
+The Ingress controller should now be running on the EKS worker nodes. Let's now create a sample “2048-game” and expose it as an Ingress object on our EKS cluster. The code below will let you do so. Append this piece of code into `index.ts` file from Step 3 and run `pulumi up`:
 
 ```typescript
+//* STEP 4: Deploy Sample Application
+
 function createNewNamespace(name: string): k8s.core.v1.Namespace {
-   //Create new namespace
-   return new k8s.core.v1.Namespace(name, { metadata: { name: name } }, { provider: cluster.provider });
- }
+    //Create new namespace
+    return new k8s.core.v1.Namespace(name, { metadata: { name: name } }, { provider: cluster.provider });
+  }
 
 //declare 2048 namespace, deployment and service
 const nsgame = createNewNamespace("2048-game");
 
 const deploymentgame = new k8s.extensions.v1beta1.Deployment("deployment-game", {
-   metadata: { name: "deployment-game", namespace: "2048-game" },
-   spec: {
-       replicas: 5,
-       template: {
-           metadata: { labels: { app: "2048" } },
-           spec: { containers: [{
-                       image: "alexwhen/docker-2048",
-                       imagePullPolicy: "Always",
-                       name: "2048",
-                       ports: [{ containerPort: 80 }]
-                   }],
-           },
-       },
-   },
+    metadata: { name: "deployment-game", namespace: "2048-game" },
+    spec: {
+        replicas: 5,
+        template: { 
+            metadata: { labels: { app: "2048" } },
+            spec: { containers: [{ 
+                        image: "alexwhen/docker-2048", 
+                        imagePullPolicy: "Always", 
+                        name: "2048", 
+                        ports: [{ containerPort: 80 }] 
+                    }],
+            },
+        },
+    },
 }, { provider: cluster.provider });
 
 const servicegame = new k8s.core.v1.Service("service-game", {
-   metadata: { name: "service-2048", namespace: "2048-game" },
-   spec: {
-       ports: [{ port: 80, targetPort: 80, protocol: "TCP" }],
-       type: "NodePort",
-       selector: { app: "2048" },
-   },
+    metadata: { name: "service-2048", namespace: "2048-game" },
+    spec: {
+        ports: [{ port: 80, targetPort: 80, protocol: "TCP" }],
+        type: "NodePort",
+        selector: { app: "2048" },
+    },
 }, { provider: cluster.provider });
 
 //declare 2048 ingress
-const ingressgame = new k8s.extensions.v1beta1.Ingress("ingress-game", {
-   metadata: {
-       name: "2048-ingress",
-       namespace: "2048-game",
-       annotations: {
-           "kubernetes.io/ingress.class": "alb",
-           "alb.ingress.kubernetes.io/scheme": "internet-facing"
-       },
-       labels: { app: "2048-ingress" },
-   },
-   spec: {
-       rules: [{
-           http: {
-               paths: [{ path: "/*", backend: { serviceName: "service-2048", servicePort: 80 } }]
-           }
-       }],
-   },
+export const ingressgame = new k8s.extensions.v1beta1.Ingress("ingress-game", {
+    metadata: { 
+        name: "2048-ingress", 
+        namespace: "2048-game",
+        annotations: { 
+            "kubernetes.io/ingress.class": "alb", 
+            "alb.ingress.kubernetes.io/scheme": "internet-facing",
+        },
+        labels: { app: "2048-ingress" },
+    },
+    spec: {
+        rules: [{ 
+            http: { 
+                paths: [{ path: "/*", backend: { serviceName: "service-2048", servicePort: 80 } }] 
+            }
+        }],
+    },
 }, { provider: cluster.provider });
 ```
 After few seconds, verify the Ingress resource as follows:
