@@ -35,7 +35,7 @@ drwxr-xr-x   95 nishidavidson  staff   3040 Jun 18 18:22 node_modules
 -rw-------    1 nishidavidson  staff    522 Jun 18 18:22 tsconfig.json
 ```
 
-## Step 2: Create an EKS cluster, an EFS endpoint and mount the EFS endpoint in each public subnet of the EKS cluster:
+## Step 2: Create an EKS cluster, an EFS endpoint and mount the same in each public subnet of the EKS cluster:
 
 The code below can be pasted in `index.ts` to create a default EKS cluster with two public subnets in the new VPC. We then declare EFS endpoint and mount the same to both subnets so the the EKS worker nodes can access the filesystem. 
 
