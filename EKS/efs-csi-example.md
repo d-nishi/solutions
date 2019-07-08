@@ -1,5 +1,5 @@
 ---
-title: "Persisting Kubernetes workloads with Amazon EFS CSI volumes using Pulumi Crosswalk for AWS"
+title: "Persisting Kubernetes workloads with Amazon EFS CSI volumes using Pulumi SDKs"
 authors: ["nishi-davidson"]
 tags: ["AWS", "EKS", "Kubernetes"]
 date: "2019-08-06"
