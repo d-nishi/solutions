@@ -19,9 +19,13 @@ We will work with two Pulumi stacks in this example, one for the Amazon EKS clus
 ```bash
 
 $ brew install pulumi # download pulumi CLI
+
 $ mkdir k8sinfra && cd k8sinfra
+
 $ pulumi new aws-typescript
+
 $ npm install --save @pulumi/kubernetes @pulumi/eks
+
 $ ls -la
 drwxr-xr-x   10 nishidavidson  staff    320 Jun 18 18:22 .
 drwxr-xr-x+ 102 nishidavidson  staff   3264 Jun 18 18:13 ..
@@ -304,7 +308,9 @@ Once the step above is complete, you will be ready to deploy your k8s sample app
 ```bash
 
 $ mkdir k8sapp && cd k8sapp
+
 $ pulumi new typescript
+
 $ npm install --save @pulumi/eks @pulumi/kubernetes
 
 ```
