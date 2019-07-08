@@ -1,5 +1,5 @@
 ---
-title: "bernetes Ingress with AWS ALB Ingress Controller and Pulumi Crosswalk for AWS"
+title: "Kubernetes Ingress with AWS ALB Ingress Controller and Pulumi Crosswalk for AWS"
 authors: ["nishi-davidson"]
 tags: ["AWS", "EKS", "Kubernetes"]
 date: "2019-05-06"
