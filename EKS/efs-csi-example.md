@@ -323,7 +323,7 @@ import * as pulumi from "@pulumi/pulumi";
 import * as k8s from "@pulumi/kubernetes";
 
 const env = pulumi.getStack();
-const cluster = new pulumi.StackReference(`d-nishi/eks-efs-cluster/${env}`);
+const cluster = new pulumi.StackReference(`d-nishi/k8sinfra/${env}`);
 const kubeconfig = cluster.getOutput("kubeconfig");
 const efsFilesystemId = cluster.getOutput("efsFilesystemId");
 
@@ -390,7 +390,7 @@ Verify the pod is running and that data is being written into the EFS filesystem
 
 ```bash
 
-$ kubectl exec -ti efs-app -- tail -f /data/out.txt`
+$ kubectl exec -ti efs-app -- tail -f /data/out.txt
 Mon Jul 8 06:12:00 UTC 2019
 Mon Jul 8 06:12:05 UTC 2019
 Mon Jul 8 06:12:10 UTC 2019
@@ -398,4 +398,4 @@ Mon Jul 8 06:12:15 UTC 2019
 
 ```
 
-This brings us to the end of our solution with Pulumi and AWS EFS on Amazon EKS. For more examples, refer to Pulumi's open source repository [here](https://github.com/pulumi/examples). Refer to my other blogs on Kubernetes [here](https://blog.pulumi.com/author/nishi-davidson).
+This brings us to the end of our solution with Pulumi and AWS EFS on Amazon EKS. For more examples, refer to Pulumi's open source repository [here](https://github.com/pulumi/examples). Refer to other Kubernetes blogs [here](https://blog.pulumi.com/author/nishi-davidson).
